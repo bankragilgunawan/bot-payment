@@ -1,0 +1,190 @@
+<!DOCTYPE html><html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prediksi Sicbo Pro</title>
+  <style>
+     .subtitle {
+  text-align: center;
+  font-size: 1em;
+  color: #777;
+  margin-top: -0.5px; /* lebih rapat ke h1 */
+  margin-bottom: 15px;
+  opacity: 0.5;
+  font-style: comic book;
+}
+    *,*::before,*::after{box-sizing:border-box}
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+    :root{
+      --primary:#4CAF50;
+      --primary-dark:#43a047;
+      --bg:#eef1f4;
+      --card-bg:#ffffffcc;
+      --text:#333;
+      --radius:14px;
+      --shadow:0 8px 24px rgba(0,0,0,.15);
+    }
+    body{
+      margin:0;
+      font-family:'Poppins',sans-serif;
+      background:linear-gradient(135deg,#e3f2fd 0%,#f0f2f5 40%,#ffffff 100%);
+      color:var(--text);
+      display:flex;
+      flex-direction:column;
+      min-height:100vh;
+    }
+    h1{
+      text-align:center;
+      margin:8px 0 16px;
+      font-weight:700;
+    }
+    .app{
+      flex:1;
+      width:100%;
+      max-width:420px;
+      margin:0 auto;
+      padding:16px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    .card{
+      background:var(--card-bg);
+      backdrop-filter:blur(12px);
+      -webkit-backdrop-filter:blur(12px);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:16px;
+      animation:fadeIn .6s ease both;
+    }
+    input,select,button{
+      width:100%;
+      padding:10px 14px;
+      margin:6px 0;
+      border:1px solid #ddd;
+      border-radius:var(--radius);
+      font-size:1rem;
+      outline:none;
+      transition:box-shadow .25s ease,transform .25s ease;
+    }
+    input:focus,select:focus{box-shadow:0 0 0 2px var(--primary)}
+    button{
+      background:var(--primary);
+      color:#fff;
+      border:none;
+      font-weight:600;
+    }
+    button:active{transform:scale(.97)}
+    .hasil,.statistik,.total{font-weight:600;text-align:center}
+    #riwayatHasil{max-height:220px;overflow-y:auto;padding-right:6px}
+    .hasil-item{padding:6px 0;border-bottom:1px dashed #ccc;animation:fadeSlide .5s ease both}
+    .yes{color:var(--primary-dark)}
+    .no{color:#e53935}
+    .profit{color:var(--primary-dark)}
+    .loss{color:#e53935}
+    @keyframes fadeSlide{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    #riwayatHasil::-webkit-scrollbar{width:4px}
+    #riwayatHasil::-webkit-scrollbar-thumb{background:var(--primary);border-radius:2px}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>Prediksi Sicbo Pro</h1>
+<div class="subtitle">By : bankragilgunawan@gmail.com</div>
+    <div class="card">
+      <input id="angkaInput" placeholder="Masukkan 3 angka (contoh: 123)" type ="number"maxlength="3" />
+      <select id="prediksiSelect">
+        <option value="besar">Besar</option>
+        <option value="kecil">Kecil</option>
+        <option value="ganjil">Ganjil</option>
+        <option value="genap">Genap</option>
+      </select>
+      <input id="investInput" type="number" placeholder="Investasi (default: 10000)" />
+      <button onclick="cekPrediksi()">Cek Prediksi</button>
+    </div><div class="card hasil" id="hasilPrediksi"></div>
+<div class="card statistik" id="statistik"></div>
+<div class="card total" id="totalAkhir"></div>
+
+<div class="card" id="riwayatHasil"></div>
+
+  </div><script>
+// Script asli dipertahankan tanpa perubahan logika
+const angkaInput = document.getElementById("angkaInput");
+const prediksiSelect = document.getElementById("prediksiSelect");
+const investInput = document.getElementById("investInput");
+const hasilPrediksi = document.getElementById("hasilPrediksi");
+const riwayatHasil = document.getElementById("riwayatHasil");
+const statistik = document.getElementById("statistik");
+const totalAkhir = document.getElementById("totalAkhir");
+
+let jumlahYes = 0, jumlahNo = 0, totalProfit = 0, totalLoss = 0;
+let riwayat = [];
+
+function formatRibuan(angka) {
+  return angka.toLocaleString("id-ID");
+}
+
+function cekPrediksi() {
+  const angka = angkaInput.value.trim();
+  if (angka.length !== 3 || isNaN(angka)) {
+    alert("Masukkan 3 angka, contoh: 123");
+    return;
+  }
+
+  const a = parseInt(angka[0]), b = parseInt(angka[1]), c = parseInt(angka[2]);
+  const total = a + b + c;
+  const genap = total % 2 === 0;
+  const besar = total >= 11 && total <= 17;
+  const kecil = total >= 4 && total <= 10;
+
+  const jenis = prediksiSelect.value;
+  const investasi = parseInt(investInput.value) || 10000;
+  let kategori = "";
+
+  if (jenis === "besar") kategori = besar ? "YES" : "NO";
+  else if (jenis === "kecil") kategori = kecil ? "YES" : "NO";
+  else if (jenis === "ganjil") kategori = !genap ? "YES" : "NO";
+  else if (jenis === "genap") kategori = genap ? "YES" : "NO";
+
+  let nilai = 0, simbol = "", keterangan = "";
+
+  if (kategori === "YES") {
+    nilai = Math.floor(investasi * 0.97);
+    jumlahYes++;
+    totalProfit += nilai;
+    simbol = "✅ YES 🪙 " + formatRibuan(nilai);
+    keterangan = "profit";
+  } else {
+    nilai = investasi;
+    jumlahNo++;
+    totalLoss += nilai;
+    simbol = "❌ NO 🔻 " + formatRibuan(nilai);
+    keterangan = "loss";
+  }
+
+  const tipeTotal = besar ? "Besar" : kecil ? "Kecil" : "Tripel";
+  const tipeGenap = genap ? "Genap" : "Ganjil";
+  const hasilText = `${angka} → ${total} = ${tipeTotal}, ${tipeGenap} <span class="${kategori === 'YES' ? 'yes' : 'no'}"> ${simbol}</span>`;
+  hasilPrediksi.innerHTML = hasilText;
+
+  riwayat.unshift(`<div class="hasil-item">${hasilText}</div>`);
+  tampilkanRiwayat();
+
+  statistik.innerHTML = `✅ YES: ${jumlahYes} | ❌ NO: ${jumlahNo} <br>🪙 Profit: <span class="profit">${formatRibuan(totalProfit)}</span> | 🔻 Loss: <span class="loss">${formatRibuan(totalLoss)}</span>`;
+
+  const selisih = totalProfit - totalLoss;
+  if (selisih > 0) {
+    totalAkhir.innerHTML = `Total: <span class="profit">${formatRibuan(selisih)} Profit</span>`;
+  } else if (selisih < 0) {
+    totalAkhir.innerHTML = `Total: <span class="loss">${formatRibuan(Math.abs(selisih))} Loss</span>`;
+  } else {
+    totalAkhir.innerHTML = `Total: 0`;
+  }
+}
+
+function tampilkanRiwayat() {
+  riwayatHasil.innerHTML = riwayat.slice(0, 100).join('');
+}
+</script></body>
+</html>
