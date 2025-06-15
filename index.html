@@ -6,6 +6,30 @@
   <title>Prediksi Sicbo Pro</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+    
+    .sinyal-info {
+  text-align: center;
+  font-weight: 600;
+  margin-top: 12px;
+  color: #2e7d32;
+}
+.sinyal-auto {
+  background-color: #e0f7fa;
+  color: #00796b;
+  padding: 8px 12px;
+  margin-top: 10px;
+  border-radius: 8px;
+  font-weight: bold;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.hasil-item.terbaru {
+  background: #c8e6c9;
+  border-left: 4px solid #4CAF50;
+  font-weight: bold;
+  border-radius: 8px;
+}
 
     :root {
       --primary: #4CAF50;
@@ -41,7 +65,6 @@
       margin-top: -0.5px;
       margin-bottom: 15px;
       opacity: 0.5;
-      font-style: pica;
     }
 
     .app {
@@ -136,8 +159,8 @@
   <div class="app">
     <h1>Prediksi Sicbo Pro</h1>
     <div class="subtitle">By : bankragilgunawan@gmail.com</div>
-
-    <div class="card">
+   <div id="sinyal-otomatis" class="sinyal-auto"></div>
+          <div class="card">
       <input id="angkaInput" type="number" maxlength="3" placeholder="Masukkan 3 angka (contoh: 123)" />
       <select id="prediksiSelect">
         <option value="besar">Besar</option>
@@ -151,128 +174,201 @@
     </div>
 
     <div class="card hasil" id="hasilContainer">
-  <div id="hasilPrediksi"></div>
-  <div id="riwayatHasil"></div>
-</div>
+      <div id="hasilPrediksi"></div>
+      <!-- 🔍 Area Sinyal -->
+      <div id="sinyalArea" style="margin-top:8px; font-size:0.9em; color:#555;"></div>
+      <div id="riwayatHasil"></div>
+    </div>
 
-<div class="card statistik" id="statistikContainer">
-  <div id="statistik"></div>
-  <div id="totalAkhir" style="margin-top:8px"></div>
-</div>
-  <script>
-    const angkaInput = document.getElementById("angkaInput");
-    const prediksiSelect = document.getElementById("prediksiSelect");
-    const investInput = document.getElementById("investInput");
-    const hasilPrediksi = document.getElementById("hasilPrediksi");
-    const riwayatHasil = document.getElementById("riwayatHasil");
-    const statistik = document.getElementById("statistik");
-    const totalAkhir = document.getElementById("totalAkhir");
+    <div class="card statistik" id="statistikContainer">
+      <div id="statistik"></div>
+      <div id="totalAkhir" style="margin-top:8px"></div>
+    </div>
+  </div>
+<div id="sinyal-otomatis"></div>
 
-    let jumlahYes = 0, jumlahNo = 0, totalProfit = 0, totalLoss = 0;
-    let riwayat = [];
+<script>
+  const angkaInput = document.getElementById("angkaInput");
+  const prediksiSelect = document.getElementById("prediksiSelect");
+  const investInput = document.getElementById("investInput");
+  const hasilPrediksi = document.getElementById("hasilPrediksi");
+  const riwayatHasil = document.getElementById("riwayatHasil");
+  const statistik = document.getElementById("statistik");
+  const totalAkhir = document.getElementById("totalAkhir");
+  const sinyalArea = document.getElementById("sinyalArea");
+  const sinyalElement = document.getElementById("sinyal-otomatis");
 
-    function formatRibuan(angka) {
-      return angka.toLocaleString("id-ID");
-    }
+  let jumlahYes = 0, jumlahNo = 0, totalProfit = 0, totalLoss = 0;
+  let riwayat = [];
 
-    function simpanData() {
-      const data = { jumlahYes, jumlahNo, totalProfit, totalLoss, riwayat };
-      localStorage.setItem("sicboData", JSON.stringify(data));
-    }
+  function formatRibuan(angka) {
+    return angka.toLocaleString("id-ID");
+  }
 
-    function muatData() {
-      const data = JSON.parse(localStorage.getItem("sicboData"));
-      if (data) {
-        jumlahYes = data.jumlahYes || 0;
-        jumlahNo = data.jumlahNo || 0;
-        totalProfit = data.totalProfit || 0;
-        totalLoss = data.totalLoss || 0;
-        riwayat = data.riwayat || [];
-        tampilkanRiwayat();
-        updateStatistik();
-      }
-    }
+  function simpanData() {
+    const data = { jumlahYes, jumlahNo, totalProfit, totalLoss, riwayat };
+    localStorage.setItem("sicboData", JSON.stringify(data));
+  }
 
-    function cekPrediksi() {
-      const angka = angkaInput.value.trim();
-      if (angka.length !== 3 || isNaN(angka)) {
-        alert("Masukkan 3 angka, contoh: 123");
-        return;
-      }
-
-      const a = parseInt(angka[0]), b = parseInt(angka[1]), c = parseInt(angka[2]);
-      const total = a + b + c;
-      const genap = total % 2 === 0;
-      const besar = total >= 11 && total <= 17;
-      const kecil = total >= 4 && total <= 10;
-
-      const jenis = prediksiSelect.value;
-      const investasi = parseInt(investInput.value) || 10000;
-      let kategori = "";
-
-      if (jenis === "besar") kategori = besar ? "YES" : "NO";
-      else if (jenis === "kecil") kategori = kecil ? "YES" : "NO";
-      else if (jenis === "ganjil") kategori = !genap ? "YES" : "NO";
-      else if (jenis === "genap") kategori = genap ? "YES" : "NO";
-
-      let nilai = 0, simbol = "", keterangan = "";
-
-      if (kategori === "YES") {
-        nilai = Math.floor(investasi * 0.97);
-        jumlahYes++;
-        totalProfit += nilai;
-        simbol = "✅ YES 🪙 " + formatRibuan(nilai);
-        keterangan = "profit";
-      } else {
-        nilai = investasi;
-        jumlahNo++;
-        totalLoss += nilai;
-        simbol = "❌ NO 🔻 " + formatRibuan(nilai);
-        keterangan = "loss";
-      }
-
-      const tipeTotal = besar ? "Besar" : kecil ? "Kecil" : "Tripel";
-      const tipeGenap = genap ? "Genap" : "Ganjil";
-      const hasilText = `${angka} → ${total} = ${tipeTotal}, ${tipeGenap} <span class="${kategori === 'YES' ? 'yes' : 'no'}"> ${simbol}</span>`;
-
-      hasilPrediksi.innerHTML = hasilText;
-      riwayat.unshift(`<div class="hasil-item">${hasilText}</div>`);
+  function muatData() {
+    const data = JSON.parse(localStorage.getItem("sicboData"));
+    if (data) {
+      jumlahYes = data.jumlahYes || 0;
+      jumlahNo = data.jumlahNo || 0;
+      totalProfit = data.totalProfit || 0;
+      totalLoss = data.totalLoss || 0;
+      riwayat = data.riwayat || [];
       tampilkanRiwayat();
       updateStatistik();
-      simpanData();
+    }
+  }
+
+  function tampilkanRiwayat() {
+    riwayatHasil.innerHTML = riwayat.slice(0, 100).join('');
+  }
+
+  function updateStatistik() {
+    statistik.innerHTML = `✅ YES: ${jumlahYes} | ❌ NO: ${jumlahNo} <br>🪙 Profit: <span class="profit">${formatRibuan(totalProfit)}</span> | 🔻 Loss: <span class="loss">${formatRibuan(totalLoss)}</span>`;
+    const selisih = totalProfit - totalLoss;
+    if (selisih > 0) {
+      totalAkhir.innerHTML = `Total: <span class="profit">${formatRibuan(selisih)} Profit</span>`;
+    } else if (selisih < 0) {
+      totalAkhir.innerHTML = `Total: <span class="loss">${formatRibuan(Math.abs(selisih))} Loss</span>`;
+    } else {
+      totalAkhir.innerHTML = `Total: 0`;
+    }
+  }
+
+  function cekPrediksi() {
+    const angka = angkaInput.value.trim();
+    if (angka.length !== 3 || isNaN(angka)) {
+      alert("Masukkan 3 angka, contoh: 123");
+      return;
     }
 
-    function tampilkanRiwayat() {
-      riwayatHasil.innerHTML = riwayat.slice(0, 100).join('');
+    const a = parseInt(angka[0]), b = parseInt(angka[1]), c = parseInt(angka[2]);
+    const total = a + b + c;
+    const genap = total % 2 === 0;
+    const besar = total >= 11 && total <= 17;
+    const kecil = total >= 4 && total <= 10;
+
+    const jenis = prediksiSelect.value;
+    const investasi = parseInt(investInput.value) || 10000;
+    let kategori = "";
+
+    if (jenis === "besar") kategori = besar ? "YES" : "NO";
+    else if (jenis === "kecil") kategori = kecil ? "YES" : "NO";
+    else if (jenis === "ganjil") kategori = !genap ? "YES" : "NO";
+    else if (jenis === "genap") kategori = genap ? "YES" : "NO";
+
+    let nilai = 0, simbol = "";
+
+    if (kategori === "YES") {
+      nilai = Math.floor(investasi * 0.97);
+      jumlahYes++;
+      totalProfit += nilai;
+      simbol = "✅ YES 🪙 " + formatRibuan(nilai);
+    } else {
+      nilai = investasi;
+      jumlahNo++;
+      totalLoss += nilai;
+      simbol = "❌ NO 🔻 " + formatRibuan(nilai);
     }
 
-    function updateStatistik() {
-      statistik.innerHTML = `✅ YES: ${jumlahYes} | ❌ NO: ${jumlahNo} <br>🪙 Profit: <span class="profit">${formatRibuan(totalProfit)}</span> | 🔻 Loss: <span class="loss">${formatRibuan(totalLoss)}</span>`;
-      const selisih = totalProfit - totalLoss;
-      if (selisih > 0) {
-        totalAkhir.innerHTML = `Total: <span class="profit">${formatRibuan(selisih)} Profit</span>`;
-      } else if (selisih < 0) {
-        totalAkhir.innerHTML = `Total: <span class="loss">${formatRibuan(Math.abs(selisih))} Loss</span>`;
-      } else {
-        totalAkhir.innerHTML = `Total: 0`;
+    const tipeTotal = besar ? "Besar" : kecil ? "Kecil" : "Tripel";
+    const tipeGenap = genap ? "Genap" : "Ganjil";
+    const hasilText = `${angka} → ${total} = ${tipeTotal}, ${tipeGenap} <span class="${kategori === 'YES' ? 'yes' : 'no'}"> ${simbol}</span>`;
+
+    hasilPrediksi.innerHTML = hasilText;
+    riwayat.unshift(`<div class="hasil-item terbaru">${hasilText}</div>`);
+    tampilkanRiwayat();
+    updateStatistik();
+
+    let riwayatAngka = JSON.parse(localStorage.getItem("riwayatAngka")) || [];
+    riwayatAngka.push(angka);
+    localStorage.setItem("riwayatAngka", JSON.stringify(riwayatAngka));
+
+        sinyalOtomatis();
+    simpanData();
+  }
+
+  function autoSinyal() {
+    const riwayatAngka = JSON.parse(localStorage.getItem("riwayatAngka")) || [];
+
+    let sinyal = "";
+
+    if (riwayatAngka.length >= 2) {
+      const angka1 = riwayatAngka[riwayatAngka.length - 1];
+      const angka2 = riwayatAngka[riwayatAngka.length - 2];
+
+      const a1 = angka1.split("").map(Number);
+      const a2 = angka2.split("").map(Number);
+
+      const total1 = a1.reduce((a, b) => a + b, 0);
+      const total2 = a2.reduce((a, b) => a + b, 0);
+
+      const besar1 = total1 >= 11 && total1 <= 17;
+      const besar2 = total2 >= 11 && total2 <= 17;
+
+      const genap1 = total1 % 2 === 0;
+      const genap2 = total2 % 2 === 0;
+
+      if (besar1 && besar2) {
+        sinyal += "⚠️ Dua kali 'Besar' → Waspadai 'Kecil'<br>";
+      } else if (!besar1 && !besar2) {
+        sinyal += "⚠️ Dua kali 'Kecil' → Waspadai 'Besar'<br>";
+      }
+
+      if (genap1 && genap2) {
+        sinyal += "⚠️ Dua kali 'Genap' → Kemungkinan 'Ganjil'<br>";
+      } else if (!genap1 && !genap2) {
+        sinyal += "⚠️ Dua kali 'Ganjil' → Kemungkinan 'Genap'<br>";
       }
     }
 
-    function resetData() {
-      if (confirm("Yakin ingin menghapus semua data?")) {
-        localStorage.removeItem("sicboData");
-        jumlahYes = 0;
-        jumlahNo = 0;
-        totalProfit = 0;
-        totalLoss = 0;
-        riwayat = [];
-        hasilPrediksi.innerHTML = "";
-        tampilkanRiwayat();
-        updateStatistik();
-      }
+    sinyalArea.innerHTML = sinyal ? `📡 <b>${sinyal}</b>` : "";
+  }
+
+  function sinyalOtomatis() {
+    const riwayatAngka = JSON.parse(localStorage.getItem("riwayatAngka")) || [];
+    if (riwayatAngka.length < 1) {
+      sinyalElement.innerHTML = "";
+      return;
     }
 
-    muatData();
-  </script>
-</body>
+    const lastAngka = riwayatAngka[riwayatAngka.length - 1];
+    const a = parseInt(lastAngka[0]), b = parseInt(lastAngka[1]), c = parseInt(lastAngka[2]);
+    const total = a + b + c;
+    const besar = total >= 11 && total <= 17;
+    const genap = total % 2 === 0;
+
+    let sinyal = "Kemungkinan: ";
+    sinyal += besar ? "BESAR" : "KECIL";
+    sinyal += " atau ";
+    sinyal += genap ? "GENAP" : "GANJIL";
+
+    sinyalElement.innerHTML = sinyal;
+  }
+
+  function resetData() {
+    if (confirm("Yakin ingin menghapus semua data?")) {
+      localStorage.removeItem("sicboData");
+      localStorage.removeItem("riwayatAngka");
+      jumlahYes = 0;
+      jumlahNo = 0;
+      totalProfit = 0;
+      totalLoss = 0;
+      riwayat = [];
+      hasilPrediksi.innerHTML = "";
+      tampilkanRiwayat();
+      updateStatistik();
+      sinyalArea.innerHTML = "";
+      sinyalElement.innerHTML = "";
+    }
+  }
+
+  muatData();
+  sinyalOtomatis();
+</script>  
+  </script></body>
 </html>
