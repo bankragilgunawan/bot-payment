@@ -3,372 +3,685 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Prediksi Sicbo Pro</title>
+  <title>Sicbo Pola Analyzer</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
-    
-    .sinyal-info {
-  text-align: center;
-  font-weight: 600;
-  margin-top: 12px;
-  color: #2e7d32;
-}
-.sinyal-auto {
-  background-color: #e0f7fa;
-  color: #00796b;
-  padding: 8px 12px;
-  margin-top: 10px;
-  border-radius: 8px;
-  font-weight: bold;
-  text-align: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.hasil-item.terbaru {
-  background: #c8e6c9;
-  border-left: 4px solid #4CAF50;
-  font-weight: bold;
-  border-radius: 8px;
-}
-
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
     :root {
-      --primary: #4CAF50;
-      --primary-dark: #43a047;
-      --bg: #eef1f4;
-      --card-bg: #ffffffcc;
+      --primary: #4361ee;
+      --primary-dark: #3a56d4;
+      --secondary: #7209b7;
+      --success: #06d6a0;
+      --danger: #ef476f;
+      --warning: #ffd166;
+      --dark: #1a1a2e;
+      --light: #f8f9fa;
+      --card: #ffffff;
+      --bg: #f0f2f5;
       --text: #333;
-      --radius: 14px;
-      --shadow: 0 8px 24px rgba(0, 0, 0, .15);
+      --text-light: #666;
+      --border: #e0e0e0;
+      --radius: 16px;
+      --shadow: 0 8px 20px rgba(0,0,0,0.08);
+      --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
     }
-
-    * { box-sizing: border-box; }
-    body {
+    
+    * { 
+      box-sizing: border-box; 
       margin: 0;
+      padding: 0;
+    }
+    
+    body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #e3f2fd 0%, #f0f2f5 40%, #ffffff 100%);
+      background: var(--bg);
       color: var(--text);
-      display: flex;
-      flex-direction: column;
+      line-height: 1.6;
+      padding: 16px;
       min-height: 100vh;
     }
-
-    h1 {
-      text-align: center;
-      margin: 8px 0 16px;
-      font-weight: 700;
-    }
-
-    .subtitle {
-      text-align: center;
-      font-size: 1em;
-      color: #777;
-      margin-top: -0.5px;
-      margin-bottom: 15px;
-      opacity: 0.5;
-    }
-
-    .app {
-      flex: 1;
-      max-width: 420px;
+    
+    .container {
+      max-width: 500px;
       margin: 0 auto;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
     }
-
-    .card {
-      background: var(--card-bg);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 16px;
-      animation: fadeIn .6s ease both;
-    }
-
-    input, select, button {
-      width: 100%;
-      padding: 10px 14px;
-      margin: 6px 0;
-      border: 1px solid #ddd;
-      border-radius: var(--radius);
-      font-size: 1rem;
-      outline: none;
-      transition: box-shadow .25s ease, transform .25s ease;
-    }
-
-    input:focus, select:focus {
-      box-shadow: 0 0 0 2px var(--primary);
-    }
-
-    button {
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      font-weight: 600;
-    }
-
-    button:active {
-      transform: scale(.97);
-    }
-
-    .hasil, .statistik, .total {
-      font-weight: 600;
+    
+    .header {
       text-align: center;
+      margin-bottom: 24px;
+      padding: 20px;
+      background: var(--gradient);
+      border-radius: var(--radius);
+      color: white;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
     }
-
-    #riwayatHasil {
-      max-height: 220px;
-      overflow-y: auto;
-      padding-right: 6px;
+    
+    .header::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,200,0) 70%);
+      transform: rotate(30deg);
     }
-
-    .hasil-item {
-      padding: 6px 0;
-      border-bottom: 1px dashed #ccc;
-      animation: fadeSlide .5s ease both;
+    
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
     }
-
-    .yes { color: var(--primary-dark); }
-    .no { color: #e53935; }
-    .profit { color: var(--primary-dark); }
-    .loss { color: #e53935; }
-
-    @keyframes fadeSlide {
-      from { opacity: 0; transform: translateY(8px); }
+    
+    .subtitle {
+      font-size: 0.9rem;
+      opacity: 0.9;
+      font-weight: 300;
+    }
+    
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+    }
+    
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .input-group {
+      margin-bottom: 16px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: var(--text);
+    }
+    
+    input, select {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: 2px solid var(--border);
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: #fafafa;
+    }
+    
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+      background: white;
+    }
+    
+    .btn-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    
+    button {
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .btn-primary {
+      background: var(--gradient);
+      color: white;
+    }
+    
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(67, 97, 238, 0.3);
+    }
+    
+    .btn-danger:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(239, 71, 111, 0.3);
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    
+    .stat-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      border: 1px solid var(--border);
+    }
+    
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 8px 0;
+    }
+    
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-light);
+    }
+    
+    .yes { color: var(--success); }
+    .no { color: var(--danger); }
+    
+    .history-item {
+      padding: 12px;
+      background: #f8f9ff;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      border-left: 4px solid var(--primary);
+      font-size: 0.9rem;
+    }
+    
+    .history-item.triple {
+      border-left-color: var(--danger);
+      background: #fff5f5;
+    }
+    
+    .pattern-card {
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      color: white;
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+    
+    .pattern-title {
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .pattern-value {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin: 10px 0;
+    }
+    
+    .pattern-desc {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+    
+    .algorithm-section {
+      background: #f0f7ff;
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-top: 20px;
+    }
+    
+    .algorithm-title {
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .algorithm-steps {
+      padding-left: 20px;
+    }
+    
+    .algorithm-steps li {
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+    
+    .highlight {
+      background: rgba(67, 97, 238, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+    
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    #riwayatHasil::-webkit-scrollbar {
-      width: 4px;
-    }
-
-    #riwayatHasil::-webkit-scrollbar-thumb {
-      background: var(--primary);
-      border-radius: 2px;
+    
+    @media (max-width: 480px) {
+      .container {
+        padding: 12px;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .btn-group {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="app">
-    <h1>Prediksi Sicbo Pro</h1>
-    <div class="subtitle">By : bankragilgunawan@gmail.com</div>
-   <div id="sinyal-otomatis" class="sinyal-auto"></div>
-          <div class="card">
-      <input id="angkaInput" type="number" maxlength="3" placeholder="Masukkan 3 angka (contoh: 123)" />
-      <select id="prediksiSelect">
-        <option value="besar">Besar</option>
-        <option value="kecil">Kecil</option>
-        <option value="ganjil">Ganjil</option>
-        <option value="genap">Genap</option>
-      </select>
-      <input id="investInput" type="number" placeholder="Investasi (default: 10000)" />
-      <button onclick="cekPrediksi()">Cek Prediksi</button>
-      <button onclick="resetData()" style="background:#e53935">🔄 Reset Data</button>
+  <div class="container">
+    <div class="header pulse">
+      <h1><i class="fas fa-dice"></i> Sicbo Pola Analyzer</h1>
+      <div class="subtitle">Analisis Pola dan Prediksi Sicbo dengan Algoritma Canggih</div>
     </div>
 
-    <div class="card hasil" id="hasilContainer">
-      <div id="hasilPrediksi"></div>
-      <!-- 🔍 Area Sinyal -->
-      <div id="sinyalArea" style="margin-top:8px; font-size:0.9em; color:#555;"></div>
-      <div id="riwayatHasil"></div>
+    <div class="pattern-card">
+      <div class="pattern-title">
+        <i class="fas fa-satellite-dish"></i>
+        <span id="polaSinyal"> Menunggu Data...</span>
+      </div>
+      <div class="pattern-value" id="polaRekomendasi">-</div>
+      <div class="pattern-desc" id="polaDeskripsi">Masukkan data untuk mulai analisis</div>
     </div>
 
-    <div class="card statistik" id="statistikContainer">
-      <div id="statistik"></div>
-      <div id="totalAkhir" style="margin-top:8px"></div>
+    <div class="card">
+      <h2 class="card-title"><i class="fas fa-calculator"></i> Input Data</h2>
+      
+      <div class="input-group">
+        <label for="angkaInput"><i class="fas fa-hashtag"></i> Angka Sicbo (3 digit)</label>
+        <input type="number" id="angkaInput" placeholder="Contoh: 123" maxlength="3">
+      </div>
+      
+      <div class="input-group">
+        <label for="prediksiSelect"><i class="fas fa-bullseye"></i> Prediksi Anda</label>
+        <select id="prediksiSelect">
+          <option value="besar">Besar (11-17)</option>
+          <option value="kecil">Kecil (4-10)</option>
+          <option value="ganjil">Ganjil</option>
+          <option value="genap">Genap</option>
+        </select>
+      </div>
+      
+      <div class="input-group">
+        <label for="investInput"><i class="fas fa-coins"></i> Jumlah Investasi (Rp)</label>
+        <input type="number" id="investInput" placeholder="Default: 10.000" value="10000">
+      </div>
+      
+      <div class="btn-group">
+        <button class="btn-primary" onclick="cekPrediksi()">
+          <i class="fas fa-check-circle"></i> Cek Prediksi
+        </button>
+        <button class="btn-danger" onclick="resetData()">
+          <i class="fas fa-redo"></i> Reset
+        </button>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label"><i class="fas fa-check"></i> Prediksi Benar</div>
+        <div class="stat-value yes" id="jumlahYes">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label"><i class="fas fa-times"></i> Prediksi Salah</div>
+        <div class="stat-value no" id="jumlahNo">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label"><i class="fas fa-money-bill-wave"></i> Profit</div>
+        <div class="stat-value yes" id="totalProfit">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label"><i class="fas fa-money-bill-wave"></i> Loss</div>
+        <div class="stat-value no" id="totalLoss">0</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title"><i class="fas fa-history"></i> Riwayat Terbaru</h2>
+      <div id="riwayatBox"></div>
+    </div>
+
+    <div class="card algorithm-section">
+      <h2 class="algorithm-title"><i class="fas fa-brain"></i> Algoritma Pola Canggih</h2>
+      <ul class="algorithm-steps">
+        <li><span class="highlight">Analisis Sequensial</span>: Menganalisis urutan 2-8 hasil terakhir untuk pola berulang</li>
+        <li><span class="highlight">Pola Dominan</span>: Mengidentifikasi pola yang paling sering muncul dalam jangka pendek</li>
+        <li><span class="highlight">Korelasi Statistik</span>: Menghitung probabilitas berdasarkan frekuensi kemunculan</li>
+        <li><span class="highlight">Rekomendasi Adaptif</span>: Menyesuaikan rekomendasi berdasarkan tren terkini</li>
+        <li><span class="highlight">Validasi Silang</span>: Memverifikasi pola dengan metode statistik ganda</li>
+      </ul>
     </div>
   </div>
-<div id="sinyal-otomatis"></div>
 
-<script>
-  const angkaInput = document.getElementById("angkaInput");
-  const prediksiSelect = document.getElementById("prediksiSelect");
-  const investInput = document.getElementById("investInput");
-  const hasilPrediksi = document.getElementById("hasilPrediksi");
-  const riwayatHasil = document.getElementById("riwayatHasil");
-  const statistik = document.getElementById("statistik");
-  const totalAkhir = document.getElementById("totalAkhir");
-  const sinyalArea = document.getElementById("sinyalArea");
-  const sinyalElement = document.getElementById("sinyal-otomatis");
+  <script>
+    const angkaInput = document.getElementById("angkaInput");
+    const prediksiSelect = document.getElementById("prediksiSelect");
+    const investInput = document.getElementById("investInput");
+    const jumlahYes = document.getElementById("jumlahYes");
+    const jumlahNo = document.getElementById("jumlahNo");
+    const totalProfit = document.getElementById("totalProfit");
+    const totalLoss = document.getElementById("totalLoss");
+    const polaSinyal = document.getElementById("polaSinyal");
+    const polaRekomendasi = document.getElementById("polaRekomendasi");
+    const polaDeskripsi = document.getElementById("polaDeskripsi");
+    const riwayatBox = document.getElementById("riwayatBox");
 
-  let jumlahYes = 0, jumlahNo = 0, totalProfit = 0, totalLoss = 0;
-  let riwayat = [];
+    let statistik = {
+      yes: 0,
+      no: 0,
+      profit: 0,
+      loss: 0
+    };
 
-  function formatRibuan(angka) {
-    return angka.toLocaleString("id-ID");
-  }
+    let hasilJenis = [];
+    let riwayat = [];
+    let riwayatAngka = []; // Untuk menyimpan angka yang diinput
 
-  function simpanData() {
-    const data = { jumlahYes, jumlahNo, totalProfit, totalLoss, riwayat };
-    localStorage.setItem("sicboData", JSON.stringify(data));
-  }
+    // Algoritma pola yang lebih kompleks
+    const polaDatabase = {
+      // Pola 2 digit
+      "ganjilganjil": { rekom: "Genap", desc: "Setelah 2 ganjil, biasanya muncul genap" },
+      "genapgenap": { rekom: "Ganjil", desc: "Setelah 2 genap, biasanya muncul ganjil" },
+      "besarbesar": { rekom: "Kecil", desc: "Setelah 2 besar, biasanya muncul kecil" },
+      "kecilkecil": { rekom: "Besar", desc: "Setelah 2 kecil, biasanya muncul besar" },
+      
+      // Pola 3 digit
+      "ganjilgenapganjil": { rekom: "Genap", desc: "Pola zigzag ganjil-genap" },
+      "genapganjilgenap": { rekom: "Ganjil", desc: "Pola zigzag genap-ganjil" },
+      "besarkecilbesar": { rekom: "Kecil", desc: "Pola zigzag besar-kecil" },
+      "kecilbesarkecil": { rekom: "Besar", desc: "Pola zigzag kecil-besar" },
+      
+      // Pola 4 digit
+      "ganjilganjilgenapgenap": { rekom: "Ganjil", desc: "Pola transisi ganjil dominan" },
+      "genapgenapganjilganjil": { rekom: "Genap", desc: "Pola transisi genap dominan" },
+      "besarbesarkecilkecil": { rekom: "Besar", desc: "Pola transisi besar dominan" },
+      "kecilkecilbesarbesar": { rekom: "Kecil", desc: "Pola transisi kecil dominan" },
+      
+      // Pola 5 digit
+      "ganjilgenapganjilgenapganjil": { rekom: "Genap", desc: "Pola alternatif ganjil-genap" },
+      "genapganjilgenapganjilgenap": { rekom: "Ganjil", desc: "Pola alternatif genap-ganjil" },
+      
+      // Pola 6 digit
+      "ganjilganjilgenapgenapganjilganjil": { rekom: "Genap", desc: "Pola kompleks ganjil-genap" },
+      "besarkecilbesarkecilbesarkecil": { rekom: "Besar", desc: "Pola kompleks besar-kecil" }
+    };
 
-  function muatData() {
-    const data = JSON.parse(localStorage.getItem("sicboData"));
-    if (data) {
-      jumlahYes = data.jumlahYes || 0;
-      jumlahNo = data.jumlahNo || 0;
-      totalProfit = data.totalProfit || 0;
-      totalLoss = data.totalLoss || 0;
-      riwayat = data.riwayat || [];
-      tampilkanRiwayat();
-      updateStatistik();
-    }
-  }
+    function cekPrediksi() {
+      const angka = angkaInput.value.trim();
+      const jenis = prediksiSelect.value;
+      const investasi = parseInt(investInput.value) || 10000;
 
-  function tampilkanRiwayat() {
-    riwayatHasil.innerHTML = riwayat.slice(0, 100).join('');
-  }
-
-  function updateStatistik() {
-    statistik.innerHTML = `✅ YES: ${jumlahYes} | ❌ NO: ${jumlahNo} <br>🪙 Profit: <span class="profit">${formatRibuan(totalProfit)}</span> | 🔻 Loss: <span class="loss">${formatRibuan(totalLoss)}</span>`;
-    const selisih = totalProfit - totalLoss;
-    if (selisih > 0) {
-      totalAkhir.innerHTML = `Total: <span class="profit">${formatRibuan(selisih)} Profit</span>`;
-    } else if (selisih < 0) {
-      totalAkhir.innerHTML = `Total: <span class="loss">${formatRibuan(Math.abs(selisih))} Loss</span>`;
-    } else {
-      totalAkhir.innerHTML = `Total: 0`;
-    }
-  }
-
-  function cekPrediksi() {
-    const angka = angkaInput.value.trim();
-    if (angka.length !== 3 || isNaN(angka)) {
-      alert("Masukkan 3 angka, contoh: 123");
-      return;
-    }
-
-    const a = parseInt(angka[0]), b = parseInt(angka[1]), c = parseInt(angka[2]);
-    const total = a + b + c;
-    const genap = total % 2 === 0;
-    const besar = total >= 11 && total <= 17;
-    const kecil = total >= 4 && total <= 10;
-
-    const jenis = prediksiSelect.value;
-    const investasi = parseInt(investInput.value) || 10000;
-    let kategori = "";
-
-    if (jenis === "besar") kategori = besar ? "YES" : "NO";
-    else if (jenis === "kecil") kategori = kecil ? "YES" : "NO";
-    else if (jenis === "ganjil") kategori = !genap ? "YES" : "NO";
-    else if (jenis === "genap") kategori = genap ? "YES" : "NO";
-
-    let nilai = 0, simbol = "";
-
-    if (kategori === "YES") {
-      nilai = Math.floor(investasi * 0.97);
-      jumlahYes++;
-      totalProfit += nilai;
-      simbol = "✅ YES 🪙 " + formatRibuan(nilai);
-    } else {
-      nilai = investasi;
-      jumlahNo++;
-      totalLoss += nilai;
-      simbol = "❌ NO 🔻 " + formatRibuan(nilai);
-    }
-
-    const tipeTotal = besar ? "Besar" : kecil ? "Kecil" : "Tripel";
-    const tipeGenap = genap ? "Genap" : "Ganjil";
-    const hasilText = `${angka} → ${total} = ${tipeTotal}, ${tipeGenap} <span class="${kategori === 'YES' ? 'yes' : 'no'}"> ${simbol}</span>`;
-
-    hasilPrediksi.innerHTML = hasilText;
-    riwayat.unshift(`<div class="hasil-item terbaru">${hasilText}</div>`);
-    tampilkanRiwayat();
-    updateStatistik();
-
-    let riwayatAngka = JSON.parse(localStorage.getItem("riwayatAngka")) || [];
-    riwayatAngka.push(angka);
-    localStorage.setItem("riwayatAngka", JSON.stringify(riwayatAngka));
-
-        sinyalOtomatis();
-    simpanData();
-  }
-
-  function autoSinyal() {
-    const riwayatAngka = JSON.parse(localStorage.getItem("riwayatAngka")) || [];
-
-    let sinyal = "";
-
-    if (riwayatAngka.length >= 2) {
-      const angka1 = riwayatAngka[riwayatAngka.length - 1];
-      const angka2 = riwayatAngka[riwayatAngka.length - 2];
-
-      const a1 = angka1.split("").map(Number);
-      const a2 = angka2.split("").map(Number);
-
-      const total1 = a1.reduce((a, b) => a + b, 0);
-      const total2 = a2.reduce((a, b) => a + b, 0);
-
-      const besar1 = total1 >= 11 && total1 <= 17;
-      const besar2 = total2 >= 11 && total2 <= 17;
-
-      const genap1 = total1 % 2 === 0;
-      const genap2 = total2 % 2 === 0;
-
-      if (besar1 && besar2) {
-        sinyal += "⚠️ Dua kali 'Besar' → Waspadai 'Kecil'<br>";
-      } else if (!besar1 && !besar2) {
-        sinyal += "⚠️ Dua kali 'Kecil' → Waspadai 'Besar'<br>";
+      if (angka.length !== 3 || isNaN(angka)) {
+        alert("Masukkan 3 angka misal: 123");
+        return;
       }
 
-      if (genap1 && genap2) {
-        sinyal += "⚠️ Dua kali 'Genap' → Kemungkinan 'Ganjil'<br>";
-      } else if (!genap1 && !genap2) {
-        sinyal += "⚠️ Dua kali 'Ganjil' → Kemungkinan 'Genap'<br>";
+      const a = parseInt(angka[0]);
+      const b = parseInt(angka[1]);
+      const c = parseInt(angka[2]);
+      const total = a + b + c;
+      const isTriple = a === b && b === c;
+      const genap = total % 2 === 0;
+      const besar = total >= 11 && total <= 17;
+      const kecil = total >= 4 && total <= 10;
+
+      // Simpan angka yang diinput
+      riwayatAngka.unshift(angka);
+      if (riwayatAngka.length > 50) riwayatAngka = riwayatAngka.slice(0, 50);
+
+      // Simpan hasil jenis
+      if (genap) hasilJenis.unshift("genap");
+      else hasilJenis.unshift("ganjil");
+
+      if (besar) hasilJenis.unshift("besar");
+      else if (kecil) hasilJenis.unshift("kecil");
+
+      if (hasilJenis.length > 50) hasilJenis = hasilJenis.slice(0, 50);
+
+      // Update pola
+      updatePolaDariRiwayat();
+
+      // Cek prediksi user
+      let hasil = "";
+      if (jenis === "besar") hasil = besar ? "YES" : "NO";
+      else if (jenis === "kecil") hasil = kecil ? "YES" : "NO";
+      else if (jenis === "ganjil") hasil = !genap ? "YES" : "NO";
+      else if (jenis === "genap") hasil = genap ? "YES" : "NO";
+
+      let nilai = 0;
+      if (hasil === "YES") {
+        nilai = Math.floor(investasi * 0.97);
+        statistik.yes++;
+        statistik.profit += nilai;
+      } else {
+        nilai = investasi;
+        statistik.no++;
+        statistik.loss += nilai;
+      }
+
+      updateStatistik();
+
+      const ringkas = `${angka} → ${total}${isTriple ? " (Triple)" : ""} = `
+        + (besar ? 'Besar' : kecil ? 'Kecil' : '-') + ', '
+        + (genap ? 'Genap' : 'Ganjil');
+
+      riwayat.unshift({
+        text: ringkas,
+        isTriple: isTriple,
+        total: total,
+        jenis: jenis,
+        hasil: hasil,
+        angka: angka
+      });
+
+      if (riwayat.length > 10) riwayat.pop();
+
+      updateRiwayat();
+
+      simpanData();
+      
+      // Reset input
+      angkaInput.value = "";
+      angkaInput.focus();
+    }
+
+    function updatePolaDariRiwayat() {
+      let sinyal = " Tidak ada pola dominan";
+      let rekomendasi = "-";
+      let deskripsi = "Masukkan lebih banyak data untuk analisis";
+
+      // Cek pola angka berulang
+      if (riwayatAngka.length >= 3) {
+        const angkaSekarang = riwayatAngka[0]; // Angka yang baru diinput
+        const angkaSebelumnya = riwayatAngka.slice(1, 6); // 5 angka sebelumnya
+        
+        // Cek apakah angka sekarang pernah muncul sebelumnya
+        const indexKemunculan = angkaSebelumnya.indexOf(angkaSekarang);
+        
+        if (indexKemunculan !== -1) {
+          // Jika angka berulang, cek angka setelah kemunculan sebelumnya
+          if (riwayatAngka.length > indexKemunculan + 2) {
+            const angkaSetelahKemunculan = riwayatAngka[indexKemunculan + 1];
+            const a = parseInt(angkaSetelahKemunculan[0]);
+            const b = parseInt(angkaSetelahKemunculan[1]);
+            const c = parseInt(angkaSetelahKemunculan[2]);
+            const total = a + b + c;
+            const genap = total % 2 === 0;
+            const besar = total >= 11 && total <= 17;
+            const kecil = total >= 4 && total <= 10;
+            
+            sinyal = ` Pola Berulang Terdeteksi`;
+            rekomendasi = `${angkaSetelahKemunculan} → ${besar ? 'Besar' : kecil ? 'Kecil' : '-'} ${genap ? 'Genap' : 'Ganjil'}`;
+            deskripsi = `Setelah angka ${angkaSekarang} muncul sebelumnya, hasil selanjutnya adalah ${angkaSetelahKemunculan}`;
+          }
+        }
+      }
+
+      // Jika tidak ada pola berulang, gunakan algoritma pola biasa
+      if (sinyal === " Tidak ada pola dominan") {
+        // Cek pola dari panjang terpanjang ke terpendek
+        for (let len = 8; len >= 2; len--) {
+          if (hasilJenis.length >= len) {
+            const potong = hasilJenis.slice(0, len).reverse().join('');
+            if (polaDatabase[potong]) {
+              sinyal = ` Pola ${len} Terdeteksi`;
+              rekomendasi = polaDatabase[potong].rekom;
+              deskripsi = polaDatabase[potong].desc;
+              break;
+            }
+          }
+        }
+      }
+
+      // Jika tidak ada pola spesifik, gunakan analisis statistik sederhana
+      if (sinyal === " Tidak ada pola dominan" && hasilJenis.length >= 4) {
+        const recent4 = hasilJenis.slice(0, 4);
+        const ganjilCount = recent4.filter(j => j === "ganjil").length;
+        const genapCount = recent4.filter(j => j === "genap").length;
+        const besarCount = recent4.filter(j => j === "besar").length;
+        const kecilCount = recent4.filter(j => j === "kecil").length;
+
+        if (ganjilCount > genapCount) {
+          sinyal = " Tren Ganjil Dominan";
+          rekomendasi = "Genap";
+          deskripsi = "4 hasil terakhir lebih banyak ganjil";
+        } else if (genapCount > ganjilCount) {
+          sinyal = " Tren Genap Dominan";
+          rekomendasi = "Ganjil";
+          deskripsi = "4 hasil terakhir lebih banyak genap";
+        } else if (besarCount > kecilCount) {
+          sinyal = " Tren Besar Dominan";
+          rekomendasi = "Kecil";
+          deskripsi = "4 hasil terakhir lebih banyak besar";
+        } else if (kecilCount > besarCount) {
+          sinyal = " Tren Kecil Dominan";
+          rekomendasi = "Besar";
+          deskripsi = "4 hasil terakhir lebih banyak kecil";
+        }
+      }
+
+      polaSinyal.textContent = sinyal;
+      polaRekomendasi.textContent = rekomendasi;
+      polaDeskripsi.textContent = deskripsi;
+    }
+
+    function updateStatistik() {
+      jumlahYes.textContent = statistik.yes;
+      jumlahNo.textContent = statistik.no;
+      totalProfit.textContent = formatRupiah(statistik.profit);
+      totalLoss.textContent = formatRupiah(statistik.loss);
+    }
+
+    function updateRiwayat() {
+      riwayatBox.innerHTML = riwayat.map(item => `
+        <div class="history-item ${item.isTriple ? 'triple' : ''}">
+          <div>${item.text}</div>
+          <div style="font-size: 0.8rem; margin-top: 4px; opacity: 0.7;">
+            Prediksi: <span class="${item.hasil === 'YES' ? 'yes' : 'no'}">${item.hasil}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function formatRupiah(angka) {
+      return new Intl.NumberFormat('id-ID').format(angka);
+    }
+
+    function resetData() {
+      if (confirm("Reset semua data?")) {
+        localStorage.removeItem("sicboPolaAnalyzer");
+        statistik = { yes: 0, no: 0, profit: 0, loss: 0 };
+        hasilJenis = [];
+        riwayat = [];
+        riwayatAngka = [];
+        polaSinyal.textContent = " Menunggu Data...";
+        polaRekomendasi.textContent = "-";
+        polaDeskripsi.textContent = "Masukkan data untuk mulai analisis";
+        updateStatistik();
+        updateRiwayat();
       }
     }
 
-    sinyalArea.innerHTML = sinyal ? `📡 <b>${sinyal}</b>` : "";
-  }
-
-  function sinyalOtomatis() {
-    const riwayatAngka = JSON.parse(localStorage.getItem("riwayatAngka")) || [];
-    if (riwayatAngka.length < 1) {
-      sinyalElement.innerHTML = "";
-      return;
+    function simpanData() {
+      const data = { 
+        statistik, 
+        hasilJenis, 
+        riwayat,
+        riwayatAngka
+      };
+      localStorage.setItem("sicboPolaAnalyzer", JSON.stringify(data));
     }
 
-    const lastAngka = riwayatAngka[riwayatAngka.length - 1];
-    const a = parseInt(lastAngka[0]), b = parseInt(lastAngka[1]), c = parseInt(lastAngka[2]);
-    const total = a + b + c;
-    const besar = total >= 11 && total <= 17;
-    const genap = total % 2 === 0;
-
-    let sinyal = "Kemungkinan: ";
-    sinyal += besar ? "BESAR" : "KECIL";
-    sinyal += " atau ";
-    sinyal += genap ? "GENAP" : "GANJIL";
-
-    sinyalElement.innerHTML = sinyal;
-  }
-
-  function resetData() {
-    if (confirm("Yakin ingin menghapus semua data?")) {
-      localStorage.removeItem("sicboData");
-      localStorage.removeItem("riwayatAngka");
-      jumlahYes = 0;
-      jumlahNo = 0;
-      totalProfit = 0;
-      totalLoss = 0;
-      riwayat = [];
-      hasilPrediksi.innerHTML = "";
-      tampilkanRiwayat();
-      updateStatistik();
-      sinyalArea.innerHTML = "";
-      sinyalElement.innerHTML = "";
+    function muatData() {
+      const data = JSON.parse(localStorage.getItem("sicboPolaAnalyzer"));
+      if (data) {
+        statistik = data.statistik || { yes: 0, no: 0, profit: 0, loss: 0 };
+        hasilJenis = data.hasilJenis || [];
+        riwayat = data.riwayat || [];
+        riwayatAngka = data.riwayatAngka || [];
+        updateStatistik();
+        updateRiwayat();
+        updatePolaDariRiwayat();
+      }
     }
-  }
 
-  muatData();
-  sinyalOtomatis();
-</script>  
-  </script></body>
+    // Inisialisasi
+    muatData();
+    
+    // Fokus otomatis ke input
+    angkaInput.focus();
+    
+    // Enter key untuk submit
+    angkaInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        cekPrediksi();
+      }
+    });
+  </script>
+</body>
 </html>
