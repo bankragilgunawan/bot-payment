@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cetak Struk - Bot Payment</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #f8fafc;
+            color: #334155;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #334155;
+            font-size: 0.9rem;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            outline: none;
+            transition: border-color 0.3s;
+            font-size: 1rem;
+            background: #f8fafc;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: #4facfe;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 14px 20px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 14px 20px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-whatsapp {
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 14px 20px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-whatsapp:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .button-group .btn-secondary,
+        .button-group .btn-whatsapp {
+            flex: 1;
+            margin-top: 0;
+        }
+
+        .items-list {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 15px;
+            background: #f8fafc;
+        }
+
+        .item-entry {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .item-entry input {
+            flex: 1;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+        }
+
+        .remove-item {
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .add-item-btn {
+            background: #4facfe;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .receipt-container {
+            background: white;
+            border: 1px dashed #cbd5e1;
+            padding: 20px;
+            position: relative;
+            font-size: 0.85rem;
+        }
+
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.05;
+            text-align: center;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .watermark-icon {
+            font-size: 80px;
+            color: #334155;
+            margin-bottom: 10px;
+        }
+
+        .watermark-text {
+            font-size: 80px;
+            color: #334155;
+            font-weight: 50px;
+        }
+
+        .receipt-header {
+            text-align: center;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .receipt-header h2 {
+            font-size: 1.3rem;
+            color: #334155;
+            margin-bottom: 3px;
+        }
+
+        .receipt-header p {
+            color: #64748b;
+            font-size: 0.8rem;
+            margin-bottom: 2px;
+        }
+
+        .receipt-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 2;
+            flex-wrap: wrap;
+        }
+
+        .info-item {
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+        }
+
+        .info-item strong {
+            color: #334155;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .items-table th {
+            background: #f1f5f9;
+            padding: 8px;
+            text-align: left;
+            font-weight: 600;
+            color: #334155;
+            border-bottom: 2px solid #e2e8f0;
+            font-size: 0.8rem;
+        }
+
+        .items-table td {
+            padding: 6px 8px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #334155;
+            font-size: 0.8rem;
+        }
+
+        .items-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .calculation {
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .calc-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.85rem;
+        }
+
+        .calc-item.total {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #334155;
+            border-bottom: 2px solid #334155;
+            margin-top: 5px;
+        }
+
+        .receipt-footer {
+            text-align: center;
+            margin-top: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .footer-text {
+            color: #64748b;
+            font-size: 0.75rem;
+            margin-bottom: 3px;
+        }
+
+            .preview-section {
+            display: none;
+        }
+
+        .preview-section.active {
+            display: block;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: white;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 500;
+            border-radius: 15px;
+            transition: background 0.3s;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+            
+            .header, .nav-tabs, .form-section, .button-group {
+                display: none;
+            }
+            
+            .preview-section {
+                display: block !important;
+            }
+            
+            .card {
+                box-shadow: none;
+                border-radius: 0;
+                padding: 0;
+            }
+            
+            .receipt-container {
+                border: none;
+                padding: 10px;
+            }
+            
+            .watermark {
+                opacity: 0.02;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.3rem;
+            }
+            
+            .card {
+                padding: 15px;
+            }
+            
+            .section-title {
+                font-size: 1.1rem;
+            }
+            
+            .item-entry {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .item-entry input {
+                width: 100%;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .watermark-icon {
+                font-size: 60px;
+            }
+            
+            .watermark-text {
+                font-size: 19px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-receipt"></i> Cetak Struk Bot Payment</h1>
+            <p>Sistem pencetakan struk profesional</p>
+        </div>
+        
+        <div class="nav-tabs">
+            <div class="tab active" onclick="switchTab('form')">Input Data</div>
+            <div class="tab" onclick="switchTab('preview')">Preview Struk</div>
+        </div>
+        
+        <div class="form-section" id="formSection">
+            <div class="card">
+                <h3 class="section-title"><i class="fas fa-user"></i> Informasi Pelanggan</h3>
+                
+                <div class="form-group">
+                    <label>Nama Pelanggan/Toko:</label>
+                    <input type="text" id="customerName" placeholder="Masukkan nama pelanggan atau toko">
+                </div>
+                
+                <div class="form-group">
+                    <label>No. Transaksi:</label>
+                    <input type="text" id="transactionId" placeholder="Masukkan nomor transaksi">
+                </div>
+                
+                <div class="form-group">
+                    <label>Tanggal Transaksi:</label>
+                    <input type="date" id="transactionDate">
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="section-title"><i class="fas fa-box"></i> Item Layanan</h3>
+                
+                <button class="add-item-btn" onclick="addItem()">
+                    <i class="fas fa-plus"></i> Tambah Item
+                </button>
+                
+                <div class="items-list" id="itemsList">
+                    <!-- Items will be added here -->
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="section-title"><i class="fas fa-money-bill"></i> Pembayaran</h3>
+                
+                <div class="form-group">
+                    <label>Uang yang Diterima:</label>
+                    <input type="number" id="amountReceived" placeholder="Masukkan jumlah uang yang diterima" oninput="calculateChange()">
+                </div>
+                
+                <div class="form-group">
+                    <label>Catatan:</label>
+                    <textarea id="notes" rows="2" placeholder="Masukkan catatan tambahan (opsional)"></textarea>
+                </div>
+                
+                <button class="btn-primary" onclick="generateReceipt()">
+                    <i class="fas fa-receipt"></i> Buat Struk
+                </button>
+            </div>
+        </div>
+        
+        <div class="preview-section" id="previewSection">
+            <div class="card">
+                <div class="receipt-container" id="receiptContainer">
+                    <div class="watermark">
+                        <div class="watermark-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="watermark-text">
+                            By : bankragilgunawan@gmail.com
+                        </div>
+                    </div>
+                    
+                    <div class="receipt-header">
+                        <h2>Bot Payment</h2>
+                        <p>Jl. Trans Sp1 Tanabang Kec. Muara Kuang Ogan Ilir</p>
+                        <p>Telp: 0816308466</p>
+                    </div>
+                    
+                    <div class="receipt-info">
+                        <div class="info-item">
+                            <strong>No. Transaksi:</strong> <span id="receiptTransactionId">-</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>Tanggal:</strong> <span id="receiptDate">-</span>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item" style="margin-bottom: 15px;">
+                        <strong>Pelanggan:</strong> <span id="receiptCustomer">-</span>
+                    </div>
+                    
+                    <table class="items-table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Harga</th>
+                            </tr>
+                        </thead>
+                        <tbody id="receiptItems">
+                            <tr>
+                                <td colspan="2" style="text-align: center; color: #94a3b8;">Belum ada item</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="calculation">
+                        <div class="calc-item">
+                            <span>Sub Total:</span>
+                            <span id="subtotal">Rp 0</span>
+                        </div>
+                        <div class="calc-item">
+                            <span>PPN (12%):</span>
+                            <span id="tax">Rp 0</span>
+                        </div>
+                        <div class="calc-item total">
+                            <span>Total Bayar:</span>
+                            <span id="total">Rp 0</span>
+                        </div>
+                        <div class="calc-item">
+                            <span>Uang yang Diterima:</span>
+                            <span id="received">Rp 0</span>
+                        </div>
+                        <div class="calc-item">
+                            <span><strong>Kembalian:</strong></span>
+                            <span id="change"><strong>Rp 0</strong></span>
+                        </div>
+                    </div>
+                    
+                    <div class="receipt-footer">
+                        <p class="footer-text">Terima kasih atas kunjungan Anda</p>
+                        <p class="footer-text">Barang yang sudah dibeli tidak dapat dikembalikan. </p>
+                                                
+                </div>
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn-secondary" onclick="printReceipt()">
+                        <i class="fas fa-print"></i> Cetak Struk
+                    </button>
+                    <button class="btn-whatsapp" onclick="sendToWhatsApp()">
+                        <i class="fab fa-whatsapp"></i> Kirim ke WA
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set tanggal default ke hari ini
+        document.getElementById('transactionDate').valueAsDate = new Date();
+        
+        // Array untuk menyimpan item
+        let items = [];
+        
+        // Fungsi untuk switch tab
+        function switchTab(tabName) {
+            const formTab = document.querySelector('.tab:nth-child(1)');
+            const previewTab = document.querySelector('.tab:nth-child(2)');
+            const formSection = document.getElementById('formSection');
+            const previewSection = document.getElementById('previewSection');
+            
+            if (tabName === 'form') {
+                formTab.classList.add('active');
+                previewTab.classList.remove('active');
+                formSection.style.display = 'block';
+                previewSection.classList.remove('active');
+            } else {
+                formTab.classList.remove('active');
+                previewTab.classList.add('active');
+                formSection.style.display = 'none';
+                previewSection.classList.add('active');
+            }
+        }
+        
+        // Fungsi untuk menambahkan item
+        function addItem() {
+            const itemIndex = items.length;
+            items.push({ name: '', price: 0 });
+            
+            const itemEntry = document.createElement('div');
+            itemEntry.className = 'item-entry';
+            itemEntry.innerHTML = `
+                <input type="text" placeholder="Nama item" onchange="updateItem(${itemIndex}, 'name', this.value)">
+                <input type="number" placeholder="Harga" onchange="updateItem(${itemIndex}, 'price', this.value)">
+                <button class="remove-item" onclick="removeItem(${itemIndex})"><i class="fas fa-times"></i></button>
+            `;
+            
+            document.getElementById('itemsList').appendChild(itemEntry);
+        }
+        
+        // Fungsi untuk mengupdate item
+        function updateItem(index, field, value) {
+            if (field === 'price') {
+                items[index][field] = parseFloat(value) || 0;
+            } else {
+                items[index][field] = value;
+            }
+        }
+        
+        // Fungsi untuk menghapus item
+        function removeItem(index) {
+            items.splice(index, 1);
+            renderItems();
+        }
+        
+        // Fungsi untuk merender ulang items
+        function renderItems() {
+            const itemsList = document.getElementById('itemsList');
+            itemsList.innerHTML = '';
+            
+            items.forEach((item, index) => {
+                const itemEntry = document.createElement('div');
+                itemEntry.className = 'item-entry';
+                itemEntry.innerHTML = `
+                    <input type="text" placeholder="Nama item" value="${item.name}" onchange="updateItem(${index}, 'name', this.value)">
+                    <input type="number" placeholder="Harga" value="${item.price}" onchange="updateItem(${index}, 'price', this.value)">
+                    <button class="remove-item" onclick="removeItem(${index})"><i class="fas fa-times"></i></button>
+                `;
+                itemsList.appendChild(itemEntry);
+            });
+        }
+        
+        // Fungsi untuk menghitung kembalian
+        function calculateChange() {
+            const amountReceived = parseFloat(document.getElementById('amountReceived').value) || 0;
+            const total = parseFloat(document.getElementById('total').textContent.replace('Rp ', '').replace(/\./g, '')) || 0;
+            const change = amountReceived - total;
+            
+            document.getElementById('received').textContent = formatRupiah(amountReceived);
+            document.getElementById('change').innerHTML = `<strong>${formatRupiah(change >= 0 ? change : 0)}</strong>`;
+        }
+        
+        // Fungsi untuk memformat angka ke format rupiah
+        function formatRupiah(angka) {
+            if (isNaN(angka)) return 'Rp 0';
+            return 'Rp ' + parseInt(angka).toLocaleString('id-ID');
+        }
+        
+        // Fungsi untuk membuat struk
+        function generateReceipt() {
+            // Ambil data dari form
+            const customerName = document.getElementById('customerName').value || 'Pelanggan';
+            const transactionId = document.getElementById('transactionId').value || 'TRX-' + new Date().getTime();
+            const transactionDate = document.getElementById('transactionDate').value;
+            const amountReceived = parseFloat(document.getElementById('amountReceived').value) || 0;
+            const notes = document.getElementById('notes').value;
+            
+            // Format tanggal
+            const dateObj = new Date(transactionDate);
+            const formattedDate = dateObj.toLocaleDateString('id-ID', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            });
+            
+            // Update informasi struk
+            document.getElementById('receiptTransactionId').textContent = transactionId;
+            document.getElementById('receiptDate').textContent = formattedDate;
+            document.getElementById('receiptCustomer').textContent = customerName;
+            
+            // Update items di struk
+            const receiptItems = document.getElementById('receiptItems');
+            if (items.length > 0) {
+                receiptItems.innerHTML = '';
+                let subtotal = 0;
+                
+                items.forEach(item => {
+                    if (item.name && item.price > 0) {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${item.name}</td>
+                            <td>${formatRupiah(item.price)}</td>
+                        `;
+                        receiptItems.appendChild(row);
+                        subtotal += item.price;
+                    }
+                });
+                
+                // Hitung total dengan PPN
+                const tax = subtotal * 0.12;
+                const total = subtotal + tax;
+                const change = amountReceived - total;
+                
+                // Update perhitungan
+                document.getElementById('subtotal').textContent = formatRupiah(subtotal);
+                document.getElementById('tax').textContent = formatRupiah(tax);
+                document.getElementById('total').textContent = formatRupiah(total);
+                document.getElementById('received').textContent = formatRupiah(amountReceived);
+                document.getElementById('change').innerHTML = `<strong>${formatRupiah(change >= 0 ? change : 0)}</strong>`;
+            } else {
+                receiptItems.innerHTML = '<tr><td colspan="2" style="text-align: center; color: #94a3b8;">Belum ada item</td></tr>';
+                document.getElementById('subtotal').textContent = 'Rp 0';
+                document.getElementById('tax').textContent = 'Rp 0';
+                document.getElementById('total').textContent = 'Rp 0';
+                document.getElementById('received').textContent = formatRupiah(amountReceived);
+                document.getElementById('change').innerHTML = '<strong>Rp 0</strong>';
+            }
+            
+            // Switch ke tab preview
+            switchTab('preview');
+        }
+        
+        // Fungsi untuk mencetak struk
+        function printReceipt() {
+            if (items.length === 0) {
+                alert('Silakan tambahkan item terlebih dahulu!');
+                return;
+            }
+            window.print();
+        }
+        
+        // Fungsi untuk mengirim struk ke WhatsApp
+        function sendToWhatsApp() {
+            if (items.length === 0) {
+                alert('Silakan tambahkan item terlebih dahulu!');
+                return;
+            }
+            
+            // Buat pesan teks struk
+            let receiptText = "*STRUK PEMBAYARAN Bot Payment*\n\n";
+            receiptText += "================================\n";
+            receiptText += `No. Transaksi: ${document.getElementById('receiptTransactionId').textContent}\n`;
+            receiptText += `Tanggal: ${document.getElementById('receiptDate').textContent}\n`;
+            receiptText += `Pelanggan: ${document.getElementById('receiptCustomer').textContent}\n`;
+            receiptText += "================================\n\n";
+            
+            // Tambahkan item-item
+            items.forEach(item => {
+                if (item.name && item.price > 0) {
+                    receiptText += `${item.name}: ${formatRupiah(item.price)}\n`;
+                }
+            });
+            
+            receiptText += "\n================================\n";
+            receiptText += `Sub Total: ${document.getElementById('subtotal').textContent}\n`;
+            receiptText += `PPN (12%): ${document.getElementById('tax').textContent}\n`;
+            receiptText += `*Total Bayar: ${document.getElementById('total').textContent}*\n`;
+            receiptText += `Uang Diterima: ${document.getElementById('received').textContent}\n`;
+            receiptText += `*Kembalian: ${document.getElementById('change').textContent}*\n`;
+            receiptText += "================================\n\n";
+            receiptText += "Terima kasih atas kunjungan Anda!\n";
+            receiptText += "Barang yang sudah dibeli tidak dapat dikembalikan\n";
+            receiptText += "by: bankragilgunawan@gmail.com";
+            
+            // Encode pesan untuk URL
+            const encodedMessage = encodeURIComponent(receiptText);
+            const phoneNumber = "0816308466";
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+            
+            // Buka WhatsApp
+            window.open(whatsappUrl, '_blank');
+            
+            // Simultaneously, create image and download it
+            html2canvas(document.getElementById('receiptContainer'), {
+                scale: 2,
+                useCORS: true,
+                logging: false
+            }).then(canvas => {
+                // Convert to blob and download
+                canvas.toBlob(function(blob) {
+                    const link = document.createElement('a');
+                    link.download = 'struk-pembayaran.jpg';
+                    link.href = URL.createObjectURL(blob);
+                    link.click();
+                }, 'image/jpeg', 0.9);
+            });
+        }
+        
+        // Tambahkan satu item default
+        window.onload = function() {
+            addItem();
+        };
+    </script>
+</body>
+</html>
