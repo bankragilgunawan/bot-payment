@@ -1,687 +1,1542 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sicbo Pola Analyzer</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-    :root {
-      --primary: #4361ee;
-      --primary-dark: #3a56d4;
-      --secondary: #7209b7;
-      --success: #06d6a0;
-      --danger: #ef476f;
-      --warning: #ffd166;
-      --dark: #1a1a2e;
-      --light: #f8f9fa;
-      --card: #ffffff;
-      --bg: #f0f2f5;
-      --text: #333;
-      --text-light: #666;
-      --border: #e0e0e0;
-      --radius: 16px;
-      --shadow: 0 8px 20px rgba(0,0,0,0.08);
-      --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
-    }
-    
-    * { 
-      box-sizing: border-box; 
-      margin: 0;
-      padding: 0;
-    }
-    
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      padding: 16px;
-      min-height: 100vh;
-    }
-    
-    .container {
-      max-width: 500px;
-      margin: 0 auto;
-    }
-    
-    .header {
-      text-align: center;
-      margin-bottom: 24px;
-      padding: 20px;
-      background: var(--gradient);
-      border-radius: var(--radius);
-      color: white;
-      box-shadow: var(--shadow);
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .header::before {
-      content: "";
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,200,0) 70%);
-      transform: rotate(30deg);
-    }
-    
-    h1 {
-      font-size: 1.8rem;
-      font-weight: 700;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
-    
-    .subtitle {
-      font-size: 0.9rem;
-      opacity: 0.9;
-      font-weight: 300;
-    }
-    
-    .card {
-      background: var(--card);
-      border-radius: var(--radius);
-      padding: 20px;
-      box-shadow: var(--shadow);
-      margin-bottom: 20px;
-      border: 1px solid var(--border);
-    }
-    
-    .card-title {
-      font-size: 1.2rem;
-      font-weight: 600;
-      margin-bottom: 16px;
-      color: var(--dark);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    
-    .input-group {
-      margin-bottom: 16px;
-    }
-    
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: 500;
-      color: var(--text);
-    }
-    
-    input, select {
-      width: 100%;
-      padding: 14px;
-      border-radius: 12px;
-      border: 2px solid var(--border);
-      font-size: 1rem;
-      transition: all 0.3s ease;
-      background: #fafafa;
-    }
-    
-    input:focus, select:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
-      background: white;
-    }
-    
-    .btn-group {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 20px;
-    }
-    
-    button {
-      padding: 14px;
-      border-radius: 12px;
-      border: none;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-    
-    .btn-primary {
-      background: var(--gradient);
-      color: white;
-    }
-    
-    .btn-danger {
-      background: var(--danger);
-      color: white;
-    }
-    
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba(67, 97, 238, 0.3);
-    }
-    
-    .btn-danger:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba(239, 71, 111, 0.3);
-    }
-    
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-      margin-bottom: 20px;
-    }
-    
-    .stat-card {
-      background: var(--card);
-      border-radius: var(--radius);
-      padding: 16px;
-      text-align: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-      border: 1px solid var(--border);
-    }
-    
-    .stat-value {
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin: 8px 0;
-    }
-    
-    .stat-label {
-      font-size: 0.85rem;
-      color: var(--text-light);
-    }
-    
-    .yes { color: var(--success); }
-    .no { color: var(--danger); }
-    
-    .history-item {
-      padding: 12px;
-      background: #f8f9ff;
-      border-radius: 10px;
-      margin-bottom: 10px;
-      border-left: 4px solid var(--primary);
-      font-size: 0.9rem;
-    }
-    
-    .history-item.triple {
-      border-left-color: var(--danger);
-      background: #fff5f5;
-    }
-    
-    .pattern-card {
-      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-      color: white;
-      border-radius: var(--radius);
-      padding: 20px;
-      margin-bottom: 20px;
-      text-align: center;
-      box-shadow: var(--shadow);
-    }
-    
-    .pattern-title {
-      font-size: 1.1rem;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-    
-    .pattern-value {
-      font-size: 1.4rem;
-      font-weight: 700;
-      margin: 10px 0;
-    }
-    
-    .pattern-desc {
-      font-size: 0.9rem;
-      opacity: 0.9;
-    }
-    
-    .algorithm-section {
-      background: #f0f7ff;
-      border-radius: var(--radius);
-      padding: 20px;
-      margin-top: 20px;
-    }
-    
-    .algorithm-title {
-      font-size: 1.1rem;
-      margin-bottom: 12px;
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    
-    .algorithm-steps {
-      padding-left: 20px;
-    }
-    
-    .algorithm-steps li {
-      margin-bottom: 10px;
-      line-height: 1.5;
-    }
-    
-    .highlight {
-      background: rgba(67, 97, 238, 0.1);
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-weight: 500;
-    }
-    
-    .pulse {
-      animation: pulse 2s infinite;
-    }
-    
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
-    
-    .fade-in {
-      animation: fadeIn 0.5s ease-in;
-    }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    @media (max-width: 480px) {
-      .container {
-        padding: 12px;
-      }
-      
-      .stats-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .btn-group {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asisten Service - Bot Payment</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 500px;
+            height: 80vh;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .chat-header p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .messages-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            position: relative;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .bot-message {
+            background: #f1f5f9;
+            color: #334155;
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            margin-top: 5px;
+            opacity: 0.8;
+        }
+
+        .bot-message .message-time {
+            color: #64748b;
+        }
+
+        .user-message .message-time {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .input-container {
+            padding: 20px;
+            border-top: 1px solid #e2e8f0;
+            background: white;
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        textarea {
+            flex: 1;
+            border: 2px solid #e2e8f0;
+            border-radius: 25px;
+            padding: 12px 20px;
+            resize: none;
+            outline: none;
+            transition: border-color 0.3s;
+            font-size: 1rem;
+            min-height: 50px;
+            max-height: 100px;
+        }
+
+        textarea:focus {
+            border-color: #4facfe;
+        }
+
+        button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            transform: none;
+            cursor: not-allowed;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 12px 16px;
+            background: #f1f5f9;
+            border-radius: 18px;
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #94a3b8;
+            border-radius: 50%;
+            animation: bounce 1.5s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .info-text {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-top: 10px;
+        }
+
+        .avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        .bot-avatar {
+            background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        .user-avatar {
+            background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        .message-with-avatar {
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .bot-message-with-avatar {
+            align-self: flex-start;
+        }
+
+        .user-message-with-avatar {
+            align-self: flex-end;
+        }
+
+        .user-message-with-avatar .message-content {
+            flex-direction: row-reverse;
+        }
+
+        .user-message-with-avatar .avatar {
+            margin-right: 0;
+            margin-left: 10px;
+        }
+
+        .message-content {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+        }
+
+        .service-categories {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .category-button {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 12px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+            text-align: center;
+        }
+
+        .category-button:hover {
+            transform: scale(1.05);
+        }
+
+        .service-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .service-button {
+            background: #e2e8f0;
+            color: #334155;
+            border: none;
+            border-radius: 12px;
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .service-button:hover {
+            background: #cbd5e1;
+        }
+
+        .form-container {
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #334155;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: #4facfe;
+        }
+
+        .submit-form {
+            background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 12px 20px;
+            width: 100%;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .submit-form:hover {
+            transform: scale(1.02);
+        }
+
+        .quick-replies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .quick-reply {
+            background: #e2e8f0;
+            color: #334155;
+            border: none;
+            border-radius: 15px;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .quick-reply:hover {
+            background: #cbd5e1;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header pulse">
-      <h1><i class="fas fa-dice"></i> Sicbo Pola Analyzer</h1>
-      <div class="subtitle">Analisis Pola dan Prediksi Sicbo dengan Algoritma Canggih</div>
-    </div>
-
-    <div class="pattern-card">
-      <div class="pattern-title">
-        <i class="fas fa-satellite-dish"></i>
-        <span id="polaSinyal"> Menunggu Data...</span>
-      </div>
-      <div class="pattern-value" id="polaRekomendasi">-</div>
-      <div class="pattern-desc" id="polaDeskripsi">Masukkan data untuk mulai analisis</div>
-    </div>
-
-    <div class="card">
-      <h2 class="card-title"><i class="fas fa-calculator"></i> Input Data</h2>
-      
-      <div class="input-group">
-        <label for="angkaInput"><i class="fas fa-hashtag"></i> Angka Sicbo (3 digit)</label>
-        <input type="number" id="angkaInput" placeholder="Contoh: 123" maxlength="3">
-      </div>
-      
-      <div class="input-group">
-        <label for="prediksiSelect"><i class="fas fa-bullseye"></i> Prediksi Anda</label>
-        <select id="prediksiSelect">
-          <option value="besar">Besar (11-17)</option>
-          <option value="kecil">Kecil (4-10)</option>
-          <option value="ganjil">Ganjil</option>
-          <option value="genap">Genap</option>
-        </select>
-      </div>
-      
-      <div class="input-group">
-        <label for="investInput"><i class="fas fa-coins"></i> Jumlah Investasi (Rp)</label>
-        <input type="number" id="investInput" placeholder="Default: 10.000" value="10000">
-      </div>
-      
-      <div class="btn-group">
-        <button class="btn-primary" onclick="cekPrediksi()">
-          <i class="fas fa-check-circle"></i> Cek Prediksi
-        </button>
-        <button class="btn-danger" onclick="resetData()">
-          <i class="fas fa-redo"></i> Reset
-        </button>
-      </div>
-    </div>
-
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-label"><i class="fas fa-check"></i> Prediksi Benar</div>
-        <div class="stat-value yes" id="jumlahYes">0</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label"><i class="fas fa-times"></i> Prediksi Salah</div>
-        <div class="stat-value no" id="jumlahNo">0</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label"><i class="fas fa-money-bill-wave"></i> Profit</div>
-        <div class="stat-value yes" id="totalProfit">0</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label"><i class="fas fa-money-bill-wave"></i> Loss</div>
-        <div class="stat-value no" id="totalLoss">0</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2 class="card-title"><i class="fas fa-history"></i> Riwayat Terbaru</h2>
-      <div id="riwayatBox"></div>
-    </div>
-
-    <div class="card algorithm-section">
-      <h2 class="algorithm-title"><i class="fas fa-brain"></i> Algoritma Pola Canggih</h2>
-      <ul class="algorithm-steps">
-        <li><span class="highlight">Analisis Sequensial</span>: Menganalisis urutan 2-8 hasil terakhir untuk pola berulang</li>
-        <li><span class="highlight">Pola Dominan</span>: Mengidentifikasi pola yang paling sering muncul dalam jangka pendek</li>
-        <li><span class="highlight">Korelasi Statistik</span>: Menghitung probabilitas berdasarkan frekuensi kemunculan</li>
-        <li><span class="highlight">Rekomendasi Adaptif</span>: Menyesuaikan rekomendasi berdasarkan tren terkini</li>
-        <li><span class="highlight">Validasi Silang</span>: Memverifikasi pola dengan metode statistik ganda</li>
-      </ul>
-    </div>
-  </div>
-
-  <script>
-    const angkaInput = document.getElementById("angkaInput");
-    const prediksiSelect = document.getElementById("prediksiSelect");
-    const investInput = document.getElementById("investInput");
-    const jumlahYes = document.getElementById("jumlahYes");
-    const jumlahNo = document.getElementById("jumlahNo");
-    const totalProfit = document.getElementById("totalProfit");
-    const totalLoss = document.getElementById("totalLoss");
-    const polaSinyal = document.getElementById("polaSinyal");
-    const polaRekomendasi = document.getElementById("polaRekomendasi");
-    const polaDeskripsi = document.getElementById("polaDeskripsi");
-    const riwayatBox = document.getElementById("riwayatBox");
-
-    let statistik = {
-      yes: 0,
-      no: 0,
-      profit: 0,
-      loss: 0
-    };
-
-    let hasilJenis = [];
-    let riwayat = [];
-    let riwayatAngka = []; // Untuk menyimpan angka yang diinput
-
-    // Algoritma pola yang lebih kompleks
-    const polaDatabase = {
-      // Pola 2 digit
-      "ganjilganjil": { rekom: "Genap", desc: "Setelah 2 ganjil, biasanya muncul genap" },
-      "genapgenap": { rekom: "Ganjil", desc: "Setelah 2 genap, biasanya muncul ganjil" },
-      "besarbesar": { rekom: "Kecil", desc: "Setelah 2 besar, biasanya muncul kecil" },
-      "kecilkecil": { rekom: "Besar", desc: "Setelah 2 kecil, biasanya muncul besar" },
-      
-      // Pola 3 digit
-      "ganjilgenapganjil": { rekom: "Genap", desc: "Pola zigzag ganjil-genap" },
-      "genapganjilgenap": { rekom: "Ganjil", desc: "Pola zigzag genap-ganjil" },
-      "besarkecilbesar": { rekom: "Kecil", desc: "Pola zigzag besar-kecil" },
-      "kecilbesarkecil": { rekom: "Besar", desc: "Pola zigzag kecil-besar" },
-      
-      // Pola 4 digit
-      "ganjilganjilgenapgenap": { rekom: "Ganjil", desc: "Pola transisi ganjil dominan" },
-      "genapgenapganjilganjil": { rekom: "Genap", desc: "Pola transisi genap dominan" },
-      "besarbesarkecilkecil": { rekom: "Besar", desc: "Pola transisi besar dominan" },
-      "kecilkecilbesarbesar": { rekom: "Kecil", desc: "Pola transisi kecil dominan" },
-      
-      // Pola 5 digit
-      "ganjilgenapganjilgenapganjil": { rekom: "Genap", desc: "Pola alternatif ganjil-genap" },
-      "genapganjilgenapganjilgenap": { rekom: "Ganjil", desc: "Pola alternatif genap-ganjil" },
-      
-      // Pola 6 digit
-      "ganjilganjilgenapgenapganjilganjil": { rekom: "Genap", desc: "Pola kompleks ganjil-genap" },
-      "besarkecilbesarkecilbesarkecil": { rekom: "Besar", desc: "Pola kompleks besar-kecil" }
-    };
-
-    function cekPrediksi() {
-      const angka = angkaInput.value.trim();
-      const jenis = prediksiSelect.value;
-      const investasi = parseInt(investInput.value) || 10000;
-
-      if (angka.length !== 3 || isNaN(angka)) {
-        alert("Masukkan 3 angka misal: 123");
-        return;
-      }
-
-      const a = parseInt(angka[0]);
-      const b = parseInt(angka[1]);
-      const c = parseInt(angka[2]);
-      const total = a + b + c;
-      const isTriple = a === b && b === c;
-      const genap = total % 2 === 0;
-      const besar = total >= 11 && total <= 17;
-      const kecil = total >= 4 && total <= 10;
-
-      // Simpan angka yang diinput
-      riwayatAngka.unshift(angka);
-      if (riwayatAngka.length > 50) riwayatAngka = riwayatAngka.slice(0, 50);
-
-      // Simpan hasil jenis
-      if (genap) hasilJenis.unshift("genap");
-      else hasilJenis.unshift("ganjil");
-
-      if (besar) hasilJenis.unshift("besar");
-      else if (kecil) hasilJenis.unshift("kecil");
-
-      if (hasilJenis.length > 50) hasilJenis = hasilJenis.slice(0, 50);
-
-      // Update pola
-      updatePolaDariRiwayat();
-
-      // Cek prediksi user
-      let hasil = "";
-      if (jenis === "besar") hasil = besar ? "YES" : "NO";
-      else if (jenis === "kecil") hasil = kecil ? "YES" : "NO";
-      else if (jenis === "ganjil") hasil = !genap ? "YES" : "NO";
-      else if (jenis === "genap") hasil = genap ? "YES" : "NO";
-
-      let nilai = 0;
-      if (hasil === "YES") {
-        nilai = Math.floor(investasi * 0.97);
-        statistik.yes++;
-        statistik.profit += nilai;
-      } else {
-        nilai = investasi;
-        statistik.no++;
-        statistik.loss += nilai;
-      }
-
-      updateStatistik();
-
-      const ringkas = `${angka} → ${total}${isTriple ? " (Triple)" : ""} = `
-        + (besar ? 'Besar' : kecil ? 'Kecil' : '-') + ', '
-        + (genap ? 'Genap' : 'Ganjil');
-
-      riwayat.unshift({
-        text: ringkas,
-        isTriple: isTriple,
-        total: total,
-        jenis: jenis,
-        hasil: hasil,
-        angka: angka
-      });
-
-      if (riwayat.length > 10) riwayat.pop();
-
-      updateRiwayat();
-
-      simpanData();
-      
-      // Reset input
-      angkaInput.value = "";
-      angkaInput.focus();
-    }
-
-    function updatePolaDariRiwayat() {
-      let sinyal = " Tidak ada pola dominan";
-      let rekomendasi = "-";
-      let deskripsi = "Masukkan lebih banyak data untuk analisis";
-
-      // Cek pola angka berulang
-      if (riwayatAngka.length >= 3) {
-        const angkaSekarang = riwayatAngka[0]; // Angka yang baru diinput
-        const angkaSebelumnya = riwayatAngka.slice(1, 6); // 5 angka sebelumnya
-        
-        // Cek apakah angka sekarang pernah muncul sebelumnya
-        const indexKemunculan = angkaSebelumnya.indexOf(angkaSekarang);
-        
-        if (indexKemunculan !== -1) {
-          // Jika angka berulang, cek angka setelah kemunculan sebelumnya
-          if (riwayatAngka.length > indexKemunculan + 2) {
-            const angkaSetelahKemunculan = riwayatAngka[indexKemunculan + 1];
-            const a = parseInt(angkaSetelahKemunculan[0]);
-            const b = parseInt(angkaSetelahKemunculan[1]);
-            const c = parseInt(angkaSetelahKemunculan[2]);
-            const total = a + b + c;
-            const genap = total % 2 === 0;
-            const besar = total >= 11 && total <= 17;
-            const kecil = total >= 4 && total <= 10;
-            
-            sinyal = ` Pola Berulang Terdeteksi`;
-            rekomendasi = `${angkaSetelahKemunculan} → ${besar ? 'Besar' : kecil ? 'Kecil' : '-'} ${genap ? 'Genap' : 'Ganjil'}`;
-            deskripsi = `Setelah angka ${angkaSekarang} muncul sebelumnya, hasil selanjutnya adalah ${angkaSetelahKemunculan}`;
-          }
-        }
-      }
-
-      // Jika tidak ada pola berulang, gunakan algoritma pola biasa
-      if (sinyal === " Tidak ada pola dominan") {
-        // Cek pola dari panjang terpanjang ke terpendek
-        for (let len = 8; len >= 2; len--) {
-          if (hasilJenis.length >= len) {
-            const potong = hasilJenis.slice(0, len).reverse().join('');
-            if (polaDatabase[potong]) {
-              sinyal = ` Pola ${len} Terdeteksi`;
-              rekomendasi = polaDatabase[potong].rekom;
-              deskripsi = polaDatabase[potong].desc;
-              break;
-            }
-          }
-        }
-      }
-
-      // Jika tidak ada pola spesifik, gunakan analisis statistik sederhana
-      if (sinyal === " Tidak ada pola dominan" && hasilJenis.length >= 4) {
-        const recent4 = hasilJenis.slice(0, 4);
-        const ganjilCount = recent4.filter(j => j === "ganjil").length;
-        const genapCount = recent4.filter(j => j === "genap").length;
-        const besarCount = recent4.filter(j => j === "besar").length;
-        const kecilCount = recent4.filter(j => j === "kecil").length;
-
-        if (ganjilCount > genapCount) {
-          sinyal = " Tren Ganjil Dominan";
-          rekomendasi = "Genap";
-          deskripsi = "4 hasil terakhir lebih banyak ganjil";
-        } else if (genapCount > ganjilCount) {
-          sinyal = " Tren Genap Dominan";
-          rekomendasi = "Ganjil";
-          deskripsi = "4 hasil terakhir lebih banyak genap";
-        } else if (besarCount > kecilCount) {
-          sinyal = " Tren Besar Dominan";
-          rekomendasi = "Kecil";
-          deskripsi = "4 hasil terakhir lebih banyak besar";
-        } else if (kecilCount > besarCount) {
-          sinyal = " Tren Kecil Dominan";
-          rekomendasi = "Besar";
-          deskripsi = "4 hasil terakhir lebih banyak kecil";
-        }
-      }
-
-      polaSinyal.textContent = sinyal;
-      polaRekomendasi.textContent = rekomendasi;
-      polaDeskripsi.textContent = deskripsi;
-    }
-
-    function updateStatistik() {
-      jumlahYes.textContent = statistik.yes;
-      jumlahNo.textContent = statistik.no;
-      totalProfit.textContent = formatRupiah(statistik.profit);
-      totalLoss.textContent = formatRupiah(statistik.loss);
-    }
-
-    function updateRiwayat() {
-      riwayatBox.innerHTML = riwayat.map(item => `
-        <div class="history-item ${item.isTriple ? 'triple' : ''}">
-          <div>${item.text}</div>
-          <div style="font-size: 0.8rem; margin-top: 4px; opacity: 0.7;">
-            Prediksi: <span class="${item.hasil === 'YES' ? 'yes' : 'no'}">${item.hasil}</span>
-          </div>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1><i class="fas fa-robot"></i> Bot Payment</h1>
+            <p>Layanan Pulsa, Transfer, PPOB & Lainnya</p>
         </div>
-      `).join('');
-    }
+        
+        <div class="messages-container" id="messagesContainer">
+            <div class="message-with-avatar bot-message-with-avatar">
+                <div class="message-content">
+                    <div class="avatar bot-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message bot-message">
+                       <div>Halo! Selamat datang di Bot Payment 👋<br>Masukkan nomor WhatsApp Anda untuk melanjutkan.</div>
+                   <div class="message-time" id="initial-time"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="input-container">
+            <div class="input-wrapper">
+                <textarea 
+                    id="messageInput" 
+                    placeholder="Ketik pesan Anda..." 
+                    rows="1"
+                ></textarea>
+                <button id="sendButton">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+            <div class="info-text">
+                Pesanan Anda akan dikirim ke WhatsApp 0816308466
+            </div>
+        </div>
+    </div>
 
-    function formatRupiah(angka) {
-      return new Intl.NumberFormat('id-ID').format(angka);
-    }
+    <script>
+        // Format waktu
+        function formatTime(date) {
+            return date.toLocaleTimeString('id-ID', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+        }
 
-    function resetData() {
-      if (confirm("Reset semua data?")) {
-        localStorage.removeItem("sicboPolaAnalyzer");
-        statistik = { yes: 0, no: 0, profit: 0, loss: 0 };
-        hasilJenis = [];
-        riwayat = [];
-        riwayatAngka = [];
-        polaSinyal.textContent = " Menunggu Data...";
-        polaRekomendasi.textContent = "-";
-        polaDeskripsi.textContent = "Masukkan data untuk mulai analisis";
-        updateStatistik();
-        updateRiwayat();
-      }
-    }
+        // Set waktu awal
+        document.getElementById('initial-time').textContent = formatTime(new Date());
 
-    function simpanData() {
-      const data = { 
-        statistik, 
-        hasilJenis, 
-        riwayat,
-        riwayatAngka
-      };
-      localStorage.setItem("sicboPolaAnalyzer", JSON.stringify(data));
-    }
+        // Referensi elemen
+        const messagesContainer = document.getElementById('messagesContainer');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
 
-    function muatData() {
-      const data = JSON.parse(localStorage.getItem("sicboPolaAnalyzer"));
-      if (data) {
-        statistik = data.statistik || { yes: 0, no: 0, profit: 0, loss: 0 };
-        hasilJenis = data.hasilJenis || [];
-        riwayat = data.riwayat || [];
-        riwayatAngka = data.riwayatAngka || [];
-        updateStatistik();
-        updateRiwayat();
-        updatePolaDariRiwayat();
-      }
-    }
+        // Fungsi untuk menambahkan pesan ke chat
+        function addMessage(text, isUser = false, showTyping = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message-with-avatar ${isUser ? 'user-message-with-avatar' : 'bot-message-with-avatar'}`;
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+            
+            if (!showTyping) {
+                const avatar = document.createElement('div');
+                avatar.className = `avatar ${isUser ? 'user-avatar' : 'bot-avatar'}`;
+                avatar.innerHTML = `<i class="fas ${isUser ? 'fa-user' : 'fa-robot'}"></i>`;
+                
+                const messageBubble = document.createElement('div');
+                messageBubble.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+                messageBubble.innerHTML = `
+                    <div>${text}</div>
+                    <div class="message-time">${formatTime(new Date())}</div>
+                `;
+                
+                messageContent.appendChild(avatar);
+                messageContent.appendChild(messageBubble);
+            } else {
+                messageDiv.className = 'typing-indicator';
+                messageDiv.innerHTML = `
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                `;
+            }
+            
+            messageDiv.appendChild(messageContent);
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
 
-    // Inisialisasi
-    muatData();
+        // Menampilkan menu layanan
+        function showMainMenu() {
+            const menuHtml = `
+                <div class="service-categories">
+                    <button class="category-button" onclick="showPulsaMenu()">Pulsa</button>
+                    <button class="category-button" onclick="showTransferMenu()">Transfer</button>
+                    <button class="category-button" onclick="showPPOBMenu()">PPOB</button>
+                    <button class="category-button" onclick="showLainnyaMenu()">Lainnya</button>
+                </div>
+            `;
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message-with-avatar bot-message-with-avatar';
+            messageDiv.innerHTML = `
+                <div class="message-content">
+                    <div class="avatar bot-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message bot-message">
+                        <div>Berikut layanan yang tersedia:</div>
+                        ${menuHtml}
+                        <div class="message-time">${formatTime(new Date())}</div>
+                    </div>
+                </div>
+            `;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Menu Pulsa
+        function showPulsaMenu() {
+            addMessage("Pulsa", true);
+            
+            const services = `
+                <div class="service-buttons">
+                    <button class="service-button" onclick="showPulsaForm()">Pulsa Reguler</button>
+                    <button class="service-button" onclick="showDataForm()">Paket Data</button>
+                    <button class="service-button" onclick="showPulsaTransferForm()">Transfer Pulsa</button>
+                </div>
+            `;
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message-with-avatar bot-message-with-avatar';
+            messageDiv.innerHTML = `
+                <div class="message-content">
+                    <div class="avatar bot-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message bot-message">
+                        <div>Pilih layanan pulsa:</div>
+                        ${services}
+                        <div class="message-time">${formatTime(new Date())}</div>
+                    </div>
+                </div>
+            `;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Menu Transfer
+        function showTransferMenu() {
+            addMessage("Transfer", true);
+            
+            const services = `
+                <div class="service-buttons">
+                    <button class="service-button" onclick="showTransferBankForm()">Transfer Bank</button>
+                    <button class="service-button" onclick="showTransferEmoneyForm()">Transfer E-Money</button>
+                    <button class="service-button" onclick="showTopupEmoneyForm()">Topup E-Money</button>
+                </div>
+            `;
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message-with-avatar bot-message-with-avatar';
+            messageDiv.innerHTML = `
+                <div class="message-content">
+                    <div class="avatar bot-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message bot-message">
+                        <div>Pilih layanan transfer:</div>
+                        ${services}
+                        <div class="message-time">${formatTime(new Date())}</div>
+                    </div>
+                </div>
+            `;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Menu PPOB
+        function showPPOBMenu() {
+            addMessage("PPOB", true);
+            
+            const services = `
+                <div class="service-buttons">
+                    <button class="service-button" onclick="showPLNForm()">Token PLN</button>
+                    <button class="service-button" onclick="showPDAMForm()">PDAM</button>
+                    <button class="service-button" onclick="showBPJSForm()">BPJS</button>
+                    <button class="service-button" onclick="showInternetForm()">Internet</button>
+                    <button class="service-button" onclick="showTVForm()">TV Kabel</button>
+                    <button class="service-button" onclick="showTelkomForm()">Telkom</button>
+                </div>
+            `;
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message-with-avatar bot-message-with-avatar';
+            messageDiv.innerHTML = `
+                <div class="message-content">
+                    <div class="avatar bot-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message bot-message">
+                        <div>Pilih layanan PPOB:</div>
+                        ${services}
+                        <div class="message-time">${formatTime(new Date())}</div>
+                    </div>
+                </div>
+            `;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Menu Lainnya
+        function showLainnyaMenu() {
+            addMessage("Lainnya", true);
+            
+            const services = `
+                <div class="service-buttons">
+                    <button class="service-button" onclick="showGameForm()">Voucher Game</button>
+                    <button class="service-button" onclick="showStreamingForm()">Voucher Streaming</button>
+                    <button class="service-button" onclick="showAsuransiForm()">Asuransi</button>
+                    <button class="service-button" onclick="showDonasiForm()">Donasi</button>
+                </div>
+            `;
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message-with-avatar bot-message-with-avatar';
+            messageDiv.innerHTML = `
+                <div class="message-content">
+                    <div class="avatar bot-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message bot-message">
+                        <div>Layanan lainnya:</div>
+                        ${services}
+                        <div class="message-time">${formatTime(new Date())}</div>
+                    </div>
+                </div>
+            `;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Form Pulsa Reguler
+        function showPulsaForm() {
+            addMessage("Pulsa Reguler", true);
+            
+            const formHtml = `
+                <div class="form-container">
+                    <div class="form-group">
+                        <label>Nomor HP Tujuan:</label>
+                        <input type="tel" id="pulsa-nomor" placeholder="081234567890">
+                    </div>
+                    <div class="form-group">
+                        <label>Nominal Pulsa:</label>
+                        <select id="pulsa-nominal">
+                            <option value="">Pilih Nominal</option>
+                            <option value="5000">Rp 5.000</option>
+                            <option value="10000">Rp 10.000</option>
+                            <option value="20000">Rp 20.000</option>
+                            <option value="25000">Rp 25.000</option>
+                            <option value="50000">Rp 50.000</option>
+                            <option value="100000">Rp 100.000</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nama Pembeli:</label>
+                        <input type="text" id="pulsa-nama" placeholder="Nama Lengkap">
+                    </div>
+                    <button class="submit-form" onclick="submitPulsaForm()">Pesan Sekarang</button>
+                </div>
+            `;
+            
+            showFormMessage(formHtml);
+        }
+
+        // Form Transfer Bank
+        function showTransferBankForm() {
+            addMessage("Transfer Bank", true);
+            
+            const formHtml = `
+                <div class="form-container">
+                    <div class="form-group">
+                        <label>Bank Tujuan:</label>
+                        <select id="transfer-bank">
+                            <option value="">Pilih Bank</option>
+                            <option value="bca">BCA</option>
+                            <option value="bni">BNI</option>
+                            <option value="bri">BRI</option>
+                            <option value="mandiri">Mandiri</option>
+                            <option value="bsi">BSI</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nomor Rekening Tujuan:</label>
+                        <input type="text" id="transfer-rek" placeholder="Nomor Rekening">
+                    </div>
+                    <div class="form-group">
+                        <label>Jumlah Transfer:</label>
+                        <input type="number" id="transfer-jumlah" placeholder="Rp">
+                    </div>
+                    <div class="form-group">
+                        <label>Nama Pengirim:</label>
+                        <input type="text" id="transfer-nama" placeholder="Nama Lengkap">
+                    </div>
+                    <button class="submit-form" onclick="submitTransferBankForm()">Pesan Sekarang</button>
+                </div>
+            `;
+            
+            showFormMessage(formHtml);
+        }
+
+        // Form Token PLN
+        function showPLNForm() {
+            addMessage("Token PLN", true);
+            
+            const formHtml = `
+                <div class="form-container">
+                    <div class="form-group">
+                        <label>ID Pelanggan:</label>
+                        <input type="text" id="pln-id" placeholder="123456789012">
+                    </div>
+                    <div class="form-group">
+                        <label>Nominal Token:</label>
+                        <select id="pln-nominal">
+                            <option value="">Pilih Nominal</option>
+                            <option value="20000">Rp 20.000</option>
+                            <option value="50000">Rp 50.000</option>
+                            <option value="100000">Rp 100.000</option>
+                            <option value="200000">Rp 200.000</option>
+                            <option value="500000">Rp 500.000</option>
+                            <option value="1000000">Rp 1.000.000</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nama Pembeli:</label>
+                        <input type="text" id="pln-nama" placeholder="Nama Lengkap">
+                    </div>
+                    <button class="submit-form" onclick="submitPLNForm()">Pesan Sekarang</button>
+                </div>
+            `;
+            
+            showFormMessage(formHtml);
+        }
+
+        // Form Paket Data
+        function showDataForm() {
+            addMessage("Paket Data", true);
+            
+            const formHtml = `
+                <div class="form-container">
+                    <div class="form-group">
+                        <label>Nomor HP Tujuan:</label>
+                        <input type="tel" id="data-nomor" placeholder="081234567890">
+                    </div>
+                    <div class="form-group">
+                        <label>Operator:</label>
+                        <select id="data-operator">
+                            <option value="">Pilih Operator</option>
+                            <option value="telkomsel">Telkomsel</option>
+                            <option value="indosat">Indosat</option>
+                            <option value="xl">XL</option>
+                            <option value="tri">Tri</option>
+                            <option value="axis">Axis</option>
+                            <option value="smartfren">Smartfren</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nama Pembeli:</label>
+                        <input type="text" id="data-nama" placeholder="Nama Lengkap">
+                    </div>
+                    <button class="submit-form" onclick="submitDataForm()">Pesan Sekarang</button>
+                </div>
+            `;
+            
+            showFormMessage(formHtml);
+        }
+
+        // Form Transfer Pulsa
+        function showPulsaTransferForm() {
+            addMessage("Transfer Pulsa", true);
+            
+            const formHtml = `
+                <div class="form-container">
+                    <div class="form-group">
+                        <label>Nomor HP Pengirim:</label>
+                        <input type="tel" id="transferpulsa-dari" placeholder="081234567890">
+                    </div>
+                    <div class="form-group">
+                        <label>Nomor HP Tujuan:</label>
+                        <input type="tel" id="transferpulsa-ke" placeholder="081234567890">
+                    </div>
+                    <div class="form-group">
+                        <label>Jumlah Transfer:</label>
+                        <input type="number" id="transferpulsa-jumlah" placeholder="Rp">
+                    </div>
+                    <div class="form-group">
+                        <label>Nama Pengirim:</label>
+                        <input type="text" id="transferpulsa-nama" placeholder="Nama Lengkap">
+                    </div>
+                    <button class="submit-form" onclick="submitPulsaTransferForm()">Pesan Sekarang</button>
+                </div>
+            `;
+            
+            showFormMessage(formHtml);
+        }
+
+        // Form Transfer E-Money
+        function showTransferEmoneyForm() {
+            addMessage("Transfer E-Money", true);
+            
+            const formHtml = `
+                <div class="form-container">
+                    <div class="form-group">
+                        <label>E-Money:</label>
+                        <select id="emoney-jenis">
+                            <option value="">Pilih E-Money</option>
+                            <option value="ovo">OVO</option>
+                            <option value="gopay">GoPay</option>
+                            <option value="dana">DANA</option>
+                            <option value="linkaja">LinkAja</option>
+                            <option value="shopeepay">ShopeePay</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nomor HP Tujuan:</label>
+                        <input type="tel" id="emoney-nomor" placeholder="081234567890">
+                    </div>
+                    <div class="form-group">
+                        <label>Jumlah Transfer:</label>
+                        <input type="number" id="emoney-jumlah" placeholder="Rp">
+                    </div>
+                    <div class="form-group">
+                        <label>Nama Pengirim:</label>
+                        <input type="text" id="emoney-nama" placeholder="Nama Lengkap">
+                    </div>
+                    <button class="submit-form" onclick="submitTransferEmoneyForm()">Pesan Sekarang</button>
+                </div>
+            `;
+            
+            showFormMessage(formHtml);
+        }
+
+        // Form Topup E-Money
+        function showTopupEmoneyForm() {
+            addMessage("Topup E-Money", true);
+            
+            const formHtml = `
+                <div class="form-container">
+                    <div class="form-group">
+                        <label>E-Money:</label>
+                        <select id="topup-jenis">
+                            <option value="">Pilih E-Money</option>
+                            <option value="ovo">OVO</option>
+                            <option value="gopay">GoPay</option>
+                            <option value="dana">DANA</option>
+                            <option value="linkaja">LinkAja</option>
+                            <option value="shopeepay">ShopeePay</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nomor HP:</label>
+                        <input type="tel" id="topup-nomor" placeholder="081234567890">
+                    </div>
+                    <div class="form-group">
+                        <label>Nominal Topup:</label>
+                        <select id="topup-nominal">
+                            <option value="">Pilih Nominal</option>
+                            <option value="10000">Rp 10.000</option>
+                            <option value="20000">Rp 20.000</option>
+                            <option value="50000">Rp 50.000</option>
+                            <option value="100000">Rp 100.000</option>
+                            <option value="200000">Rp 200.000</option>
+                            <option value="500000">Rp 500.000</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nama Pembeli:</label>
+                        <input type="text" id="topup-nama" placeholder="Nama Lengkap">
+                    </div>
+                    <button class="submit-form" onclick="submitTopupEmoneyForm()">Pesan Sekarang</button>
+                </div>
+            `;
+            
+            showFormMessage(formHtml);
+        }
+
+        // Form PDAM
+        function showPDAMForm() {
+            addMessage("PDAM", true);
+            
+            const formHtml = `
+                <div class="form-container">
+                    <div class="form-group">
+                        <label>ID Pelanggan:</label>
+                        <input type="text" id="pdam-id" placeholder="ID Pelanggan">
+                    </div>
+                    <div class="form-group">
+                        <label>Nama Wilayah:</label>
+                        <input type="text" id="pdam-wilayah" placeholder="Nama Wilayah">
+                    </div>
+                    <div class="form-group">
+                        <label>Nama Pembeli:</label>
+                        <input type="text" id="pdam-nama" placeholder="Nama Lengkap">
+                    </div>
+                    <button class="submit-form" onclick="submitPDAMForm()">Pesan Sekarang</button>
+                </div>
+            `;
+            
+            showFormMessage(formHtml);
+        }
+
+        // Form BPJS
+        function showBPJSForm() {
+            addMessage("BPJS", true);
+            
+            const formHtml = `
+                <div class="form-container">
+                    <div class="form-group">
+                        <label>No. Kartu BPJS:</label>
+                        <input type="text" id="bpjs-nomor" placeholder="No. Kartu BPJS">
+                    </div>
+                    <div class="form-group">
+                        <label>Nama Peserta:</label>
+                        <input type="text" id="bpjs-nama" placeholder="Nama Peserta">
+                    </div>
+                    <div class="form-group">
+                        <label>Bulan Pembayaran:</label>
+                        <select id="bpjs-bulan">
+                            <option value="">Pilih Bulan</option>
+                            <option value="januari">Januari</option>
+                            <option value="februari">Februari</option>
+                            <option value="maret">Maret</option>
+                            <option value="april">April</option>
+                            <option value="mei">Mei</option>
+                            <option value="juni">Juni</option>
+                            <option value="juli">Juli</option>
+                            <option value="agustus">Agustus</option>
+                            <option value="september">September</option>
+                            <option value="oktober">Oktober</option>
+                            <option value="november">November</option>
+                            <option value="desember">Desember</option>
+                        </select>
+                    </div>
+                    <button class="submit-form" onclick="submitBPJSForm()">Pesan Sekarang</button>
+                </div>
+            `;
+            
+            showFormMessage(formHtml);
+        }
+
+        // Form Internet
+        function showInternetForm() {
+            addMessage("Internet", true);
+            
+            const formHtml = `
+                <div class="form-container">
+                    <div class="form-group">
+                        <label>Provider Internet:</label>
+                        <select id="internet-provider">
+                            <option value="">Pilih Provider</option>
+                            <option value="indihome">IndiHome</option>
+                            <option value="myrepublic">MyRepublic</option>
+                            <option value="biznet">Biznet</option>
+                            <option value="firstmedia">FirstMedia</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>No. Pelanggan:</label>
+                        <input type="text" id="internet-nomor" placeholder="No. Pelanggan">
+                    </div>
+                    <div class="form-group">
+                        <label>Nama Pembeli:</label>
+                        <input type="text" id="internet-nama" placeholder="Nama Lengkap">
+                    </div>
+                    <button class="submit-form" onclick="submitInternetForm()">Pesan Sekarang</button>
+                </div>
+            `;
+            
+            showFormMessage(formHtml);
+        }
+
+        // Form TV Kabel
+        function showTVForm() {
+            addMessage("TV Kabel", true);
+            
+            const formHtml = `
+                <div class="form-container">
+                    <div class="form-group">
+                        <label>Provider TV:</label>
+                        <select id="tv-provider">
+                            <option value="">Pilih Provider</option>
+                            <option value="indihome">IndiHome TV</option>
+                            <option value="firstmedia">FirstMedia</option>
+                            <option value="myrepublic">MyRepublic TV</option>
+                            <option value="biznet">Biznet TV</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>No. Pelanggan:</label>
+                        <input type="text" id="tv-nomor" placeholder="No. Pelanggan">
+                    </div>
+                    <div class="form-group">
+                        <label>Nama Pembeli:</label>
+                        <input type="text" id="tv-nama" placeholder="Nama Lengkap">
+                    </div>
+                    <button class="submit-form" onclick="submitTVForm()">Pesan Sekarang</button>
+                </div>
+            `;
+            
+            showFormMessage(formHtml);
+        }
+
+        // Form Telkom
+        function showTelkomForm() {
+            addMessage("Telkom", true);
+            
+            const formHtml = `
+                <div class="form-container">
+                    <div class="form-group">
+                        <label>No. Telepon:</label>
+                        <input type="tel" id="telkom-nomor" placeholder="No. Telepon">
+                    </div>
+                    <div class="form-group">
+                        <label>Nama Pembeli:</label>
+                        <input type="text" id="telkom-nama" placeholder="Nama Lengkap">
+                    </div>
+                    <button class="submit-form" onclick="submitTelkomForm()">Pesan Sekarang</button>
+                </div>
+            `;
+            
+            showFormMessage(formHtml);
+        }
+
+        // Form Voucher Game
+        function showGameForm() {
+            addMessage("Voucher Game", true);
+            
+            const formHtml = `
+                <div class="form-container">
+                    <div class="form-group">
+                        <label>Jenis Game:</label>
+                        <select id="game-jenis">
+                            <option value="">Pilih Game</option>
+                            <option value="mobile-legends">Mobile Legends</option>
+                            <option value="free-fire">Free Fire</option>
+                            <option value="pubg-mobile">PUBG Mobile</option>
+                            <option value="genshin-impact">Genshin Impact</option>
+                            <option value="valorant">Valorant</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>ID Player:</label>
+                        <input type="text" id="game-id" placeholder="ID Player">
+                    </div>
+                    <div class="form-group">
+                        <label>Nominal Voucher:</label>
+                        <select id="game-nominal">
+                            <option value="">Pilih Nominal</option>
+                            <option value="diamond-50">50 Diamond</option>
+                            <option value="diamond-100">100 Diamond</option>
+                            <option value="diamond-200">200 Diamond</option>
+                            <option value="diamond-500">500 Diamond</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nama Pembeli:</label>
+                        <input type="text" id="game-nama" placeholder="Nama Lengkap">
+                    </div>
+                    <button class="submit-form" onclick="submitGameForm()">Pesan Sekarang</button>
+                </div>
+            `;
+            
+            showFormMessage(formHtml);
+        }
+
+        // Form Voucher Streaming
+        function showStreamingForm() {
+            addMessage("Voucher Streaming", true);
+            
+            const formHtml = `
+                <div class="form-container">
+                    <div class="form-group">
+                        <label>Platform Streaming:</label>
+                        <select id="streaming-platform">
+                            <option value="">Pilih Platform</option>
+                            <option value="netflix">Netflix</option>
+                            <option value="spotify">Spotify</option>
+                            <option value="youtube">YouTube Premium</option>
+                            <option value="disney">Disney+</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Email/ID:</label>
+                        <input type="text" id="streaming-id" placeholder="Email atau ID">
+                    </div>
+                    <div class="form-group">
+                        <label>Nama Pembeli:</label>
+                        <input type="text" id="streaming-nama" placeholder="Nama Lengkap">
+                    </div>
+                    <button class="submit-form" onclick="submitStreamingForm()">Pesan Sekarang</button>
+                </div>
+            `;
+            
+            showFormMessage(formHtml);
+        }
+
+        // Form Asuransi
+        function showAsuransiForm() {
+            addMessage("Asuransi", true);
+            
+            const formHtml = `
+                <div class="form-container">
+                    <div class="form-group">
+                        <label>Jenis Asuransi:</label>
+                        <select id="asuransi-jenis">
+                            <option value="">Pilih Asuransi</option>
+                            <option value="jiwa">Asuransi Jiwa</option>
+                            <option value="kesehatan">Asuransi Kesehatan</option>
+                            <option value="kendaraan">Asuransi Kendaraan</option>
+                            <option value="properti">Asuransi Properti</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nama Pemilik:</label>
+                        <input type="text" id="asuransi-nama" placeholder="Nama Lengkap">
+                    </div>
+                    <div class="form-group">
+                        <label>Keterangan:</label>
+                        <textarea id="asuransi-keterangan" placeholder="Keterangan tambahan" rows="3"></textarea>
+                    </div>
+                    <button class="submit-form" onclick="submitAsuransiForm()">Pesan Sekarang</button>
+                </div>
+            `;
+            
+            showFormMessage(formHtml);
+        }
+
+        // Form Donasi
+        function showDonasiForm() {
+            addMessage("Donasi", true);
+            
+            const formHtml = `
+                <div class="form-container">
+                    <div class="form-group">
+                        <label>Tujuan Donasi:</label>
+                        <input type="text" id="donasi-tujuan" placeholder="Tujuan Donasi">
+                    </div>
+                    <div class="form-group">
+                        <label>Jumlah Donasi:</label>
+                        <input type="number" id="donasi-jumlah" placeholder="Rp">
+                    </div>
+                    <div class="form-group">
+                        <label>Nama Donatur:</label>
+                        <input type="text" id="donasi-nama" placeholder="Nama Lengkap">
+                    </div>
+                    <button class="submit-form" onclick="submitDonasiForm()">Pesan Sekarang</button>
+                </div>
+            `;
+            
+            showFormMessage(formHtml);
+        }
+
+        // Fungsi umum untuk menampilkan form
+        function showFormMessage(formHtml) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message-with-avatar bot-message-with-avatar';
+            messageDiv.innerHTML = `
+                <div class="message-content">
+                    <div class="avatar bot-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message bot-message">
+                        ${formHtml}
+                        <div class="message-time">${formatTime(new Date())}</div>
+                    </div>
+                </div>
+            `;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Submit Form Pulsa
+        function submitPulsaForm() {
+            const nomor = document.getElementById('pulsa-nomor').value;
+            const nominal = document.getElementById('pulsa-nominal').value;
+            const nama = document.getElementById('pulsa-nama').value;
+            
+            if (!nomor || !nominal || !nama) {
+                alert('Mohon lengkapi semua field!');
+                return;
+            }
+            
+            const message = `_pesanan pulsa_\n\nNomor: ${nomor}\nNominal: Rp ${nominal}\nNama: ${nama}`;
+            sendToWhatsApp(message);
+        }
+
+        // Submit Form Transfer Bank
+        function submitTransferBankForm() {
+            const bank = document.getElementById('transfer-bank').value;
+            const rek = document.getElementById('transfer-rek').value;
+            const jumlah = document.getElementById('transfer-jumlah').value;
+            const nama = document.getElementById('transfer-nama').value;
+            
+            if (!bank || !rek || !jumlah || !nama) {
+                alert('Mohon lengkapi semua field!');
+                return;
+            }
+            
+            const message = `_pesanan transfer bank_\n\nBank: ${bank}\nRekening: ${rek}\nJumlah: Rp ${jumlah}\nNama: ${nama}`;
+            sendToWhatsApp(message);
+        }
+
+        // Submit Form Token PLN
+        function submitPLNForm() {
+            const idPelanggan = document.getElementById('pln-id').value;
+            const nominal = document.getElementById('pln-nominal').value;
+            const nama = document.getElementById('pln-nama').value;
+            
+            if (!idPelanggan || !nominal || !nama) {
+                alert('Mohon lengkapi semua field!');
+                return;
+            }
+            
+            const message = `_pesanan token PLN_\n\nID Pelanggan: ${idPelanggan}\nNominal: Rp ${nominal}\nNama: ${nama}`;
+            sendToWhatsApp(message);
+        }
+
+        // Submit Form Paket Data
+        function submitDataForm() {
+            const nomor = document.getElementById('data-nomor').value;
+            const operator = document.getElementById('data-operator').value;
+            const nama = document.getElementById('data-nama').value;
+            
+            if (!nomor || !operator || !nama) {
+                alert('Mohon lengkapi semua field!');
+                return;
+            }
+            
+            const message = `_pesanan paket data_\n\nNomor: ${nomor}\nOperator: ${operator}\nNama: ${nama}`;
+            sendToWhatsApp(message);
+        }
+
+        // Submit Form Transfer Pulsa
+        function submitPulsaTransferForm() {
+            const dari = document.getElementById('transferpulsa-dari').value;
+            const ke = document.getElementById('transferpulsa-ke').value;
+            const jumlah = document.getElementById('transferpulsa-jumlah').value;
+            const nama = document.getElementById('transferpulsa-nama').value;
+            
+            if (!dari || !ke || !jumlah || !nama) {
+                alert('Mohon lengkapi semua field!');
+                return;
+            }
+            
+            const message = `_pesanan transfer pulsa_\n\nDari: ${dari}\nKe: ${ke}\nJumlah: Rp ${jumlah}\nNama: ${nama}`;
+            sendToWhatsApp(message);
+        }
+
+        // Submit Form Transfer E-Money
+        function submitTransferEmoneyForm() {
+            const jenis = document.getElementById('emoney-jenis').value;
+            const nomor = document.getElementById('emoney-nomor').value;
+            const jumlah = document.getElementById('emoney-jumlah').value;
+            const nama = document.getElementById('emoney-nama').value;
+            
+            if (!jenis || !nomor || !jumlah || !nama) {
+                alert('Mohon lengkapi semua field!');
+                return;
+            }
+            
+            const message = `_pesanan transfer e-money_\n\nE-Money: ${jenis}\nNomor: ${nomor}\nJumlah: Rp ${jumlah}\nNama: ${nama}`;
+            sendToWhatsApp(message);
+        }
+
+        // Submit Form Topup E-Money
+        function submitTopupEmoneyForm() {
+            const jenis = document.getElementById('topup-jenis').value;
+            const nomor = document.getElementById('topup-nomor').value;
+            const nominal = document.getElementById('topup-nominal').value;
+            const nama = document.getElementById('topup-nama').value;
+            
+            if (!jenis || !nomor || !nominal || !nama) {
+                alert('Mohon lengkapi semua field!');
+                return;
+            }
+            
+            const message = `_pesanan topup e-money_\n\nE-Money: ${jenis}\nNomor: ${nomor}\nNominal: Rp ${nominal}\nNama: ${nama}`;
+            sendToWhatsApp(message);
+        }
+
+        // Submit Form PDAM
+        function submitPDAMForm() {
+            const id = document.getElementById('pdam-id').value;
+            const wilayah = document.getElementById('pdam-wilayah').value;
+            const nama = document.getElementById('pdam-nama').value;
+            
+            if (!id || !wilayah || !nama) {
+                alert('Mohon lengkapi semua field!');
+                return;
+            }
+            
+            const message = `_pesanan pdam_\n\nID Pelanggan: ${id}\nWilayah: ${wilayah}\nNama: ${nama}`;
+            sendToWhatsApp(message);
+        }
+
+        // Submit Form BPJS
+        function submitBPJSForm() {
+            const nomor = document.getElementById('bpjs-nomor').value;
+            const nama = document.getElementById('bpjs-nama').value;
+            const bulan = document.getElementById('bpjs-bulan').value;
+            
+            if (!nomor || !nama || !bulan) {
+                alert('Mohon lengkapi semua field!');
+                return;
+            }
+            
+            const message = `_pesanan bpjs_\n\nNo. Kartu: ${nomor}\nNama: ${nama}\nBulan: ${bulan}`;
+            sendToWhatsApp(message);
+        }
+
+        // Submit Form Internet
+        function submitInternetForm() {
+            const provider = document.getElementById('internet-provider').value;
+            const nomor = document.getElementById('internet-nomor').value;
+            const nama = document.getElementById('internet-nama').value;
+            
+            if (!provider || !nomor || !nama) {
+                alert('Mohon lengkapi semua field!');
+                return;
+            }
+            
+            const message = `_pesanan internet_\n\nProvider: ${provider}\nNo. Pelanggan: ${nomor}\nNama: ${nama}`;
+            sendToWhatsApp(message);
+        }
+
+        // Submit Form TV Kabel
+        function submitTVForm() {
+            const provider = document.getElementById('tv-provider').value;
+            const nomor = document.getElementById('tv-nomor').value;
+            const nama = document.getElementById('tv-nama').value;
+            
+            if (!provider || !nomor || !nama) {
+                alert('Mohon lengkapi semua field!');
+                return;
+            }
+            
+            const message = `_pesanan tv kabel_\n\nProvider: ${provider}\nNo. Pelanggan: ${nomor}\nNama: ${nama}`;
+            sendToWhatsApp(message);
+        }
+
+        // Submit Form Telkom
+        function submitTelkomForm() {
+            const nomor = document.getElementById('telkom-nomor').value;
+            const nama = document.getElementById('telkom-nama').value;
+            
+            if (!nomor || !nama) {
+                alert('Mohon lengkapi semua field!');
+                return;
+            }
+            
+            const message = `_pesanan telkom_\n\nNo. Telepon: ${nomor}\nNama: ${nama}`;
+            sendToWhatsApp(message);
+        }
+
+        // Submit Form Voucher Game
+        function submitGameForm() {
+            const jenis = document.getElementById('game-jenis').value;
+            const id = document.getElementById('game-id').value;
+            const nominal = document.getElementById('game-nominal').value;
+            const nama = document.getElementById('game-nama').value;
+            
+            if (!jenis || !id || !nominal || !nama) {
+                alert('Mohon lengkapi semua field!');
+                return;
+            }
+            
+            const message = `_pesanan voucher game_\n\nGame: ${jenis}\nID Player: ${id}\nNominal: ${nominal}\nNama: ${nama}`;
+            sendToWhatsApp(message);
+        }
+
+        // Submit Form Voucher Streaming
+        function submitStreamingForm() {
+            const platform = document.getElementById('streaming-platform').value;
+            const id = document.getElementById('streaming-id').value;
+            const nama = document.getElementById('streaming-nama').value;
+            
+            if (!platform || !id || !nama) {
+                alert('Mohon lengkapi semua field!');
+                return;
+            }
+            
+            const message = `_pesanan voucher streaming_\n\nPlatform: ${platform}\nID: ${id}\nNama: ${nama}`;
+            sendToWhatsApp(message);
+        }
+
+        // Submit Form Asuransi
+        function submitAsuransiForm() {
+            const jenis = document.getElementById('asuransi-jenis').value;
+            const nama = document.getElementById('asuransi-nama').value;
+            const keterangan = document.getElementById('asuransi-keterangan').value;
+            
+            if (!jenis || !nama) {
+                alert('Mohon lengkapi semua field!');
+                return;
+            }
+            
+            const message = `_pesanan asuransi_\n\nJenis: ${jenis}\nNama: ${nama}\nKeterangan: ${keterangan || '-'}`;
+            sendToWhatsApp(message);
+        }
+
+        // Submit Form Donasi
+        function submitDonasiForm() {
+            const tujuan = document.getElementById('donasi-tujuan').value;
+            const jumlah = document.getElementById('donasi-jumlah').value;
+            const nama = document.getElementById('donasi-nama').value;
+            
+            if (!tujuan || !jumlah || !nama) {
+                alert('Mohon lengkapi semua field!');
+                return;
+            }
+            
+            const message = `_pesanan donasi_\n\nTujuan: ${tujuan}\nJumlah: Rp ${jumlah}\nNama: ${nama}`;
+            sendToWhatsApp(message);
+        }
+
+        // Fungsi untuk mengirim pesan ke WhatsApp
+        function sendToWhatsApp(message) {
+    const adminNumber = "0816308466";
+    const userNumber = localStorage.getItem('userWA') || 'Tidak diketahui';
     
-    // Fokus otomatis ke input
-    angkaInput.focus();
-    
-    // Enter key untuk submit
-    angkaInput.addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') {
-        cekPrediksi();
-      }
-    });
-  </script>
+    const fullMessage = `${message}\n\n📱 Nomor WA User: ${userNumber}`;
+    const whatsappUrl = `https://wa.me/${adminNumber}?text=${encodeURIComponent(fullMessage)}`;
+
+    addMessage("Pesanan Anda sedang diproses. Saya akan menghubungi Anda melalui WhatsApp segera.", false);
+
+    setTimeout(() => {
+        window.open(whatsappUrl, '_blank');
+    }, 2000);
+}
+
+        // Fungsi untuk menangani pesan teks biasa
+        function handleTextMessage(message) {
+            const lowerMessage = message.toLowerCase().trim();
+            
+            // Jika user mengetik "menu", tampilkan menu layanan
+            if (lowerMessage === "menu") {
+                showMainMenu();
+                return "";
+            }
+            
+            // Daftar pertanyaan yang sudah memiliki jawaban
+            const responses = {
+                "halo": "Halo! Selamat datang di Bot Payment. Ketik 'menu' untuk melihat layanan yang tersedia.",
+                "hai": "Hai! Ada yang bisa saya bantu? Ketik 'menu' untuk melihat layanan.",
+                "apa kabar": "Saya baik, terima kasih! Bagaimana dengan Anda?",
+                "siapa kamu": "Saya adalah chatbot Bot Payment yang siap membantu Anda dengan berbagai layanan digital.",
+                "terima kasih": "Sama-sama! Jangan ragu untuk memesan layanan kami.",
+                "sampai jumpa": "Sampai jumpa! Terima kasih telah menggunakan layanan kami.",
+                "hello": "Hello! How can I help you today?",
+                "help": "Ketik 'menu' untuk melihat semua layanan yang tersedia.",
+                "pulsa": "Silakan pilih layanan pulsa seperti Pulsa Reguler, Paket Data, atau Transfer Pulsa.",
+                "transfer": "Silakan pilih layanan transfer seperti Transfer Bank, Transfer E-Money, atau Topup E-Money.",
+                "ppob": "Silakan pilih layanan PPOB seperti Token PLN, PDAM, BPJS, Internet, TV Kabel, atau Telkom.",
+                "lainnya": "Layanan lainnya meliputi Voucher Game, Voucher Streaming, Asuransi, dan Donasi."
+            };
+
+            // Cek apakah ada jawaban yang sesuai
+            for (const [key, value] of Object.entries(responses)) {
+                if (lowerMessage.includes(key)) {
+                    return value;
+                }
+            }
+
+            // Jika tidak ada jawaban yang sesuai
+            return "Maaf, saya belum memahami pertanyaan tersebut. Ketik 'menu' untuk melihat layanan yang tersedia.";
+        }
+
+        // Fungsi untuk mengirim pesan
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            // Tambahkan pesan user
+            addMessage(message, true);
+            messageInput.value = '';
+            messageInput.style.height = 'auto';
+
+            // Tampilkan indikator mengetik
+            const typingIndicator = document.createElement('div');
+            typingIndicator.className = 'typing-indicator';
+            typingIndicator.id = 'typing-indicator';
+            typingIndicator.innerHTML = `
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            `;
+            messagesContainer.appendChild(typingIndicator);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            // Simulasi delay untuk response
+            setTimeout(() => {
+                // Hapus indikator mengetik
+                if (document.getElementById('typing-indicator')) {
+                    document.getElementById('typing-indicator').remove();
+                }
+
+                // Generate response
+                const responseText = handleTextMessage(message);
+                if (responseText) {
+                    addMessage(responseText, false);
+                }
+            }, 1000);
+        }
+
+        // Event listeners
+        sendButton.addEventListener('click', sendMessage);
+
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Auto-resize textarea
+        messageInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+
+        // Focus input saat halaman dimuat
+        messageInput.focus();
+        
+        let userPhoneNumber = null;
+        
+        function handleTextMessage(message) {
+    const lowerMessage = message.toLowerCase().trim();
+
+    // Kalau belum ada nomor WA, cek apakah input user valid
+    if (!userPhoneNumber) {
+        const waRegex = /^08[0-9]{8,}$/;
+        if (waRegex.test(lowerMessage)) {
+            userPhoneNumber = lowerMessage;
+            localStorage.setItem('userWA', userPhoneNumber);
+
+            return "Terima kasih! Nomor Anda sudah disimpan.\n\nKetik *menu* untuk melihat layanan kami.";
+        } else {
+            return "Masukkan nomor WhatsApp Anda untuk melanjutkan (contoh: 081234567890)";
+        }
+    }
+
+    // Jika user sudah input WA → baru bisa lanjut fitur normal
+    if (lowerMessage === "menu") {
+        showMainMenu();
+        return "";
+    }
+
+    // Respon lain tetap seperti sebelumnya...
+    const responses = {
+        "halo": "Hai! Masukkan nomor WA dulu untuk mulai.",
+        "terima kasih": "Sama-sama! 😊",
+        // dst...
+    };
+
+    for (const [key, value] of Object.entries(responses)) {
+        if (lowerMessage.includes(key)) {
+            return value;
+        }
+    }
+
+    return "Maaf, saya belum mengerti. Ketik *menu* untuk melihat layanan.";
+}
+    </script>
 </body>
-</html>
+  </html>
