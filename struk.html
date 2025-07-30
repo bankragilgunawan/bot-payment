@@ -1,17 +1,28 @@
 <!DOCTYPE html><html lang="id">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nota Thermal Elegan</title>
   <style>
-    body {
+    * {
+      box-sizing: border-box;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
       font-family: 'Courier New', Courier, monospace;
       background: linear-gradient(to right, #e0eafc, #cfdef3);
-      padding: 30px;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-    }textarea {
-  width: 100%;
+    }h3 {
+  margin-top: 20px;
+  font-size: 20px;
+}
+
+textarea {
+  width: 90%;
   max-width: 600px;
   height: 180px;
   font-size: 14px;
@@ -25,6 +36,7 @@
 .btn-group {
   margin-top: 10px;
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
 }
 
@@ -45,7 +57,8 @@ button:hover {
 
 #nota {
   position: relative;
-  width: 300px;
+  width: 100%;
+  max-width: 320px;
   background: #fff;
   padding: 20px;
   margin-top: 30px;
@@ -127,77 +140,84 @@ button:hover {
     border: none;
     box-shadow: none;
     width: 100%;
+    max-width: none;
+    padding: 0;
   }
 }
 
   </style>
 </head>
-<body><h3>Struk Digital by Bot-Payment</h3>
-<textarea id="inputText" placeholder="Masukkan isi nota..."></textarea>
-<div class="btn-group">
-  <button onclick="buatNota()">Buat Nota</button>
-  <button onclick="downloadNota()">Download</button>
-  <button onclick="window.print()">Cetak</button>
-</div><div id="nota">
-  <div id="watermark">
-    bot-payment\nby: bankragilgunawan@gmail.com
+<body>
+  <h3>Struk Digital by Bot-Payment</h3>
+  <textarea id="inputText" placeholder="Masukkan isi nota..."></textarea>
+  <div class="btn-group">
+    <button onclick="buatNota()">Buat Nota</button>
+    <button onclick="downloadNota()">Download</button>
+    <button onclick="window.print()">Cetak</button>
   </div>
-</div><script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script><script>
-  function buatNota() {
-    const input = document.getElementById("inputText").value.trim();
-    const lines = input.split("\n");
-    const nota = document.getElementById("nota");
-    nota.querySelectorAll('.logo, .judul, .tanggal, .section, .garis, .center').forEach(e => e.remove());
+  <div id="nota">
+    <div id="watermark">
+      bot-payment
+      by: bankragilgunawan@gmail.com
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>
+    function buatNota() {
+      const input = document.getElementById("inputText").value.trim();
+      const lines = input.split("\n");
+      const nota = document.getElementById("nota");
+      nota.querySelectorAll('.logo, .judul, .tanggal, .section, .garis, .center').forEach(e => e.remove());const logoDiv = document.createElement('div');
+  logoDiv.className = 'logo';
+  const logoImg = document.createElement('img');
+  logoImg.src = "https://bankragilgunawan.wordpress.com/wp-content/uploads/2025/07/10000107376979112625138413541.png";
+  logoDiv.appendChild(logoImg);
+  nota.appendChild(logoDiv);
 
-    const logoDiv = document.createElement('div');
-    logoDiv.className = 'logo';
-    const logoImg = document.createElement('img');
-    logoImg.src = "https://bankragilgunawan.wordpress.com/wp-content/uploads/2025/07/10000107376979112625138413541.png";
-    logoDiv.appendChild(logoImg);
-    nota.appendChild(logoDiv);
+  const judul = document.createElement('div');
+  judul.className = 'judul';
+  judul.textContent = lines.shift().replace(/\*/g, '');
+  nota.appendChild(judul);
 
-    const judul = document.createElement('div');
-    judul.className = 'judul';
-    judul.textContent = lines.shift().replace(/\*/g, '');
-    nota.appendChild(judul);
+  const tanggalDiv = document.createElement('div');
+  tanggalDiv.className = 'tanggal';
+  const now = new Date();
+  tanggalDiv.textContent = `Dicetak: ${now.toLocaleDateString('id-ID')} ${now.toLocaleTimeString('id-ID')}`;
+  nota.appendChild(tanggalDiv);
 
-    const tanggalDiv = document.createElement('div');
-    tanggalDiv.className = 'tanggal';
-    const now = new Date();
-    tanggalDiv.textContent = `Dicetak: ${now.toLocaleDateString('id-ID')} ${now.toLocaleTimeString('id-ID')}`;
-    nota.appendChild(tanggalDiv);
+  const info = document.createElement('div');
+  info.className = 'section';
+  info.textContent = lines.shift();
+  nota.appendChild(info);
 
-    const info = document.createElement('div');
-    info.className = 'section';
-    info.textContent = lines.shift();
-    nota.appendChild(info);
+  const garis1 = document.createElement('div');
+  garis1.className = 'garis';
+  nota.appendChild(garis1);
 
-    const garis1 = document.createElement('div');
-    garis1.className = 'garis';
-    nota.appendChild(garis1);
+  const isiUtama = document.createElement('div');
+  isiUtama.className = 'section';
+  isiUtama.textContent = lines.slice(0, -1).join('\n');
+  nota.appendChild(isiUtama);
 
-    const isiUtama = document.createElement('div');
-    isiUtama.className = 'section';
-    isiUtama.textContent = lines.slice(0, -1).join('\n');
-    nota.appendChild(isiUtama);
+  const garis2 = document.createElement('div');
+  garis2.className = 'garis';
+  nota.appendChild(garis2);
 
-    const garis2 = document.createElement('div');
-    garis2.className = 'garis';
-    nota.appendChild(garis2);
+  const akhir = document.createElement('div');
+  akhir.className = 'center';
+  akhir.textContent = lines[lines.length - 1];
+  nota.appendChild(akhir);
+}
 
-    const akhir = document.createElement('div');
-    akhir.className = 'center';
-    akhir.textContent = lines[lines.length - 1];
-    nota.appendChild(akhir);
-  }
+function downloadNota() {
+  html2canvas(document.getElementById("nota")).then(canvas => {
+    const link = document.createElement("a");
+    link.download = "nota_lengkap.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  });
+}
 
-  function downloadNota() {
-    html2canvas(document.getElementById("nota")).then(canvas => {
-      const link = document.createElement("a");
-      link.download = "nota_lengkap.png";
-      link.href = canvas.toDataURL("image/png");
-      link.click();
-    });
-  }
-</script></body>
+  </script>
+</body>
 </html>
