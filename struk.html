@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Struk Pesanan Generator</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -638,7 +638,7 @@
                 html2pdf().set(opt).from(receipt).save();
             }
 
-            // Download Image
+            // Download Image using html2canvas
             function downloadImage() {
                 const receipt = document.getElementById('receipt');
                 if (receipt.textContent.includes('Belum ada pesanan')) {
@@ -649,23 +649,30 @@
                 // Show loading
                 document.getElementById('loading').style.display = 'block';
 
-                domtoimage.toPng(receipt)
-                    .then(function (dataUrl) {
-                        // Hide loading
-                        document.getElementById('loading').style.display = 'none';
-                        
-                        // Create download link
-                        const link = document.createElement('a');
-                        link.download = 'struk-pesanan.png';
-                        link.href = dataUrl;
-                        link.click();
-                    })
-                    .catch(function (error) {
-                        // Hide loading
-                        document.getElementById('loading').style.display = 'none';
-                        showError('Gagal membuat gambar: ' + error.message);
-                        console.error('Error:', error);
-                    });
+                // Use html2canvas to convert to image
+                html2canvas(receipt, {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff'
+                }).then(function(canvas) {
+                    // Hide loading
+                    document.getElementById('loading').style.display = 'none';
+                    
+                    // Create image from canvas
+                    const imgData = canvas.toDataURL('image/png');
+                    
+                    // Create download link
+                    const link = document.createElement('a');
+                    link.download = 'struk-pesanan.png';
+                    link.href = imgData;
+                    link.click();
+                }).catch(function(error) {
+                    // Hide loading
+                    document.getElementById('loading').style.display = 'none';
+                    showError('Gagal membuat gambar: ' + error.message);
+                    console.error('Error:', error);
+                });
             }
 
             // Print receipt
